@@ -11,7 +11,7 @@ class Renderer
     std::experimental::propagate_const<std::unique_ptr<Impl>> pImpl;
 
 public:
-    Renderer(std::shared_ptr<VirtualFileSystem>);
+    Renderer(const std::shared_ptr<VirtualFileSystem>);
     virtual ~Renderer();
 
     Renderer(Renderer &&);
@@ -19,6 +19,6 @@ public:
     Renderer(const Renderer &) = delete;
     Renderer &operator=(const Renderer &) = delete;
 
-    void drawFrame();
-    void resize(const int width, const int height);
+    void drawFrame() const;
+    void resize(const int width, const int height) const;
 };

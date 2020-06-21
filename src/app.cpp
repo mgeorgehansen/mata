@@ -10,7 +10,7 @@ class App::Impl
     GLFWwindow *pWindow;
     std::shared_ptr<Renderer> pRenderer;
 
-    void processInput()
+    void processInput() const
     {
         if (glfwGetKey(this->pWindow, GLFW_KEY_ESCAPE) == GLFW_PRESS)
         {
@@ -18,7 +18,7 @@ class App::Impl
         }
     }
 
-    void swapBuffers()
+    void swapBuffers() const
     {
         glfwSwapBuffers(this->pWindow);
     }
@@ -34,7 +34,7 @@ public:
         glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 
         this->pWindow = glfwCreateWindow(800, 600, "Mata", nullptr, nullptr);
-        if (this->pWindow == nullptr)
+        if (nullptr == this->pWindow)
         {
             throw new std::runtime_error("Failed to create GLFW Window");
         }
@@ -42,9 +42,9 @@ public:
 
         glbinding::initialize(glfwGetProcAddress);
 
-        auto vfs = std::make_shared<VirtualFileSystem>(
+        const auto vfs = std::make_shared<VirtualFileSystem>(
             execDir() / "resources");
-        auto pRenderer = this->pRenderer = std::make_shared<Renderer>(vfs);
+        const auto pRenderer = this->pRenderer = std::make_shared<Renderer>(vfs);
 
         glfwSetWindowUserPointer(this->pWindow, pRenderer.get());
         glfwSetFramebufferSizeCallback(this->pWindow, [](GLFWwindow *pWindow, int width, int height) -> void {
@@ -58,7 +58,7 @@ public:
         glfwTerminate();
     }
 
-    void run()
+    void run() const
     {
         while (!glfwWindowShouldClose(this->pWindow))
         {
@@ -82,7 +82,7 @@ App &App::operator=(App &&) = default;
 App::App() : pImpl(std::make_unique<Impl>()) {}
 
 
-void App::run(void)
+void App::run() const
 {
     pImpl->run();
 }

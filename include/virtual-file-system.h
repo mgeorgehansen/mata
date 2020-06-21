@@ -19,5 +19,5 @@ public:
     VirtualFileSystem(const VirtualFileSystem &) = delete;
     VirtualFileSystem &operator=(const VirtualFileSystem &) = delete;
 
-    std::string readFile(const std::filesystem::path &path);
+    std::string readFile(const std::filesystem::path &path) const;
 };

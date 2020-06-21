@@ -8,7 +8,7 @@
 
 class VirtualFileSystem::Impl
 {
-    const std::filesystem::path rootPath;
+    std::filesystem::path rootPath;
 
 public:
     Impl(const std::filesystem::path &rootPath) : rootPath(rootPath)
@@ -27,7 +27,7 @@ public:
         }
     }
 
-    std::string readFile(const std::filesystem::path &path)
+    std::string readFile(const std::filesystem::path &path) const
     {
         if (!path.is_relative())
         {
@@ -53,7 +53,7 @@ public:
     }
 };
 
-VirtualFileSystem::~VirtualFileSystem(void) = default;
+VirtualFileSystem::~VirtualFileSystem() = default;
 
 VirtualFileSystem::VirtualFileSystem(VirtualFileSystem &&) = default;
 
@@ -61,7 +61,7 @@ VirtualFileSystem &VirtualFileSystem::operator=(VirtualFileSystem &&) = default;
 
 VirtualFileSystem::VirtualFileSystem(const std::filesystem::path &rootPath) : pImpl(std::make_unique<Impl>(rootPath)) {}
 
-std::string VirtualFileSystem::readFile(const std::filesystem::path &path)
+std::string VirtualFileSystem::readFile(const std::filesystem::path &path) const
 {
     return this->pImpl->readFile(path);
 }

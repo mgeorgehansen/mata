@@ -20,16 +20,16 @@ typedef GLuint shader_h;
 
 class Renderer::Impl
 {
-    const std::shared_ptr<VirtualFileSystem> pVfs;
+    std::shared_ptr<VirtualFileSystem> pVfs;
     shaderprogram_h hShaderProgram = 0;
 
-    void clearScreen()
+    void clearScreen() const
     {
         glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
         glClear(ClearBufferMask::GL_COLOR_BUFFER_BIT);
     }
 
-    shaderprogram_h initShaderProgram()
+    shaderprogram_h initShaderProgram() const
     {
         const auto hVertexShader = this->loadShader("default.vert", GL_VERTEX_SHADER);
         const auto hFragmentShader = this->loadShader("default.frag", GL_FRAGMENT_SHADER);
@@ -38,10 +38,10 @@ class Renderer::Impl
         glAttachShader(hShaderProgram, hFragmentShader);
         glLinkProgram(hShaderProgram);
         int success;
-        char infoLog[512];
         glGetProgramiv(hShaderProgram, GL_LINK_STATUS, &success);
         if (!success)
         {
+            char infoLog[512];
             glGetProgramInfoLog(hShaderProgram, 512, NULL, infoLog);
             throw new std::runtime_error(fmt::format(
                 "Failed to link shader program: {0}", std::string_view(infoLog)));
@@ -51,7 +51,7 @@ class Renderer::Impl
         return hShaderProgram;
     }
 
-    shader_h loadShader(const std::filesystem::path& shaderPath, GLenum shaderType)
+    shader_h loadShader(const std::filesystem::path& shaderPath, const GLenum shaderType) const
     {
         const shader_h hShader = glCreateShader(shaderType);
         if (hShader == 0)
@@ -65,10 +65,10 @@ class Renderer::Impl
         glShaderSource(hShader, 1, &shaderSrcCstr, NULL);
         glCompileShader(hShader);
         int success;
-        char infoLog[512];
         glGetShaderiv(hShader, GL_COMPILE_STATUS, &success);
         if (!success)
         {
+            char infoLog[512];
             glGetShaderInfoLog(hShader, 512, NULL, infoLog);
             throw new std::runtime_error(fmt::format(
                 "Error compiling shader {0}: {1}", shaderPath.string(), std::string_view(infoLog)));
@@ -76,7 +76,7 @@ class Renderer::Impl
         return hShader;
     }
 
-    void drawTriangle()
+    void drawTriangle() const
     {
         float vertices[] = {
             -0.5f,
@@ -108,20 +108,20 @@ class Renderer::Impl
     }
 
 public:
-    Impl(std::shared_ptr<VirtualFileSystem> _pVfs) : pVfs(_pVfs)
+    Impl(const std::shared_ptr<VirtualFileSystem> _pVfs) : pVfs(_pVfs)
     {
         this->hShaderProgram = this->initShaderProgram();
     }
     ~Impl() = default;
 
-    void drawFrame()
+    void drawFrame() const
     {
         this->clearScreen();
 
         this->drawTriangle();
     }
 
-    void resize(const int width, const int height)
+    void resize(const int width, const int height) const
     {
         glViewport(0, 0, width, height);
     }
@@ -133,14 +133,14 @@ Renderer::Renderer(Renderer &&) = default;
 
 Renderer &Renderer::operator=(Renderer &&) = default;
 
-Renderer::Renderer(std::shared_ptr<VirtualFileSystem> _pVfs) : pImpl(std::make_unique<Impl>(_pVfs)) {}
+Renderer::Renderer(const std::shared_ptr<VirtualFileSystem> _pVfs) : pImpl(std::make_unique<Impl>(_pVfs)) {}
 
-void Renderer::drawFrame()
+void Renderer::drawFrame() const
 {
     pImpl->drawFrame();
 }
 
-void Renderer::resize(const int width, const int height)
+void Renderer::resize(const int width, const int height) const
 {
     pImpl->resize(width, height);
 }

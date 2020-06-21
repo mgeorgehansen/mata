@@ -10,7 +10,7 @@ int main()
 {
     try
     {
-        App app;
+        const App app;
         app.run();
     }
     catch (std::exception *error)
