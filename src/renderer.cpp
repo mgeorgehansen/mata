@@ -1,5 +1,5 @@
-#include <glad/glad.h>
-#include <GLFW/glfw3.h>
+#include <glbinding/glbinding.h>
+#include <glbinding/gl33core/gl.h>
 #include <string>
 #include <iostream>
 #include <exception>
@@ -12,37 +12,20 @@
 #include "virtual-file-system.h"
 #include "utils/string.h"
 
+using namespace gl;
+
 typedef GLuint shaderprogram_h;
 typedef GLuint shader_h;
 
-void framebuffer_size_callback(GLFWwindow *pWindow, int width, int height)
-{
-    glViewport(0, 0, width, height);
-}
-
 class Renderer::Impl
 {
-    GLFWwindow *pWindow;
     const std::shared_ptr<VirtualFileSystem> pVfs;
-    shaderprogram_h hShaderProgram;
-
-    void processInput()
-    {
-        if (glfwGetKey(this->pWindow, GLFW_KEY_ESCAPE) == GLFW_PRESS)
-        {
-            glfwSetWindowShouldClose(this->pWindow, true);
-        }
-    }
+    shaderprogram_h hShaderProgram = 0;
 
     void clearScreen()
     {
         glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
-        glClear(GL_COLOR_BUFFER_BIT);
-    }
-
-    void swapBuffers()
-    {
-        glfwSwapBuffers(this->pWindow);
+        glClear(ClearBufferMask::GL_COLOR_BUFFER_BIT);
     }
 
     shaderprogram_h initShaderProgram()
@@ -76,7 +59,7 @@ class Renderer::Impl
         }
 
         const std::string shaderSrc = this->pVfs->readFile(
-            format("shaders/%s", shaderName.c_str()));
+            "shaders/" + shaderName);
         const char *shaderSrcCstr = shaderSrc.c_str();
         glShaderSource(hShader, 1, &shaderSrcCstr, NULL);
         glCompileShader(hShader);
@@ -92,7 +75,7 @@ class Renderer::Impl
         return hShader;
     }
 
-    void draw()
+    void drawTriangle()
     {
         float vertices[] = {
             -0.5f,
@@ -124,54 +107,26 @@ class Renderer::Impl
     }
 
 public:
-    Impl(std::shared_ptr<VirtualFileSystem> _pVfs) : pWindow(NULL), pVfs(_pVfs), hShaderProgram(0)
+    Impl(std::shared_ptr<VirtualFileSystem> _pVfs) : pVfs(_pVfs)
     {
-        glfwInit();
-        glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-        glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
-        glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-        // for mac.
-        glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
-
-        this->pWindow = glfwCreateWindow(800, 600, "Mata", NULL, NULL);
-        if (this->pWindow == NULL)
-        {
-            throw new std::runtime_error("Failed to create GLFW Window");
-        }
-        glfwMakeContextCurrent(this->pWindow);
-
-        if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
-        {
-            throw new std::runtime_error("Failed to initialize GLAD");
-        }
-
-        glfwSetFramebufferSizeCallback(this->pWindow, framebuffer_size_callback);
-
         this->hShaderProgram = this->initShaderProgram();
     }
-    ~Impl()
+    ~Impl() = default;
+
+    void drawFrame()
     {
-        glfwTerminate();
+        this->clearScreen();
+
+        this->drawTriangle();
     }
 
-    void run()
+    void resize(const int width, const int height)
     {
-        while (!glfwWindowShouldClose(this->pWindow))
-        {
-            this->processInput();
-
-            this->clearScreen();
-
-            this->draw();
-
-            this->swapBuffers();
-
-            glfwPollEvents();
-        }
+        glViewport(0, 0, width, height);
     }
 };
 
-Renderer::~Renderer(void) = default;
+Renderer::~Renderer() = default;
 
 Renderer::Renderer(Renderer &&) = default;
 
@@ -179,7 +134,12 @@ Renderer &Renderer::operator=(Renderer &&) = default;
 
 Renderer::Renderer(std::shared_ptr<VirtualFileSystem> _pVfs) : pImpl(std::make_unique<Impl>(_pVfs)) {}
 
-void Renderer::run(void)
+void Renderer::drawFrame()
 {
-    pImpl->run();
+    pImpl->drawFrame();
+}
+
+void Renderer::resize(const int width, const int height)
+{
+    pImpl->resize(width, height);
 }

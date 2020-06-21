@@ -4,18 +4,14 @@
 #include <memory>
 #include <filesystem>
 
-#include "renderer.h"
-#include "virtual-file-system.h"
-#include "utils/filesystem.h"
+#include "app.h"
 
 int main()
 {
     try
     {
-        auto vfs = std::make_shared<VirtualFileSystem>(
-            execDir() / "resources");
-        Renderer renderer(vfs);
-        renderer.run();
+        App app;
+        app.run();
     }
     catch (std::exception *error)
     {
