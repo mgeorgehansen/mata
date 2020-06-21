@@ -2,9 +2,9 @@
 #include <string>
 #include <filesystem>
 #include <fstream>
+#include <fmt/core.h>
 
 #include "virtual-file-system.h"
-#include "utils/string.h"
 
 class VirtualFileSystem::Impl
 {
@@ -15,15 +15,15 @@ public:
     {
         if (!rootPath.is_absolute())
         {
-            throw new std::logic_error(format("root path is not absolute: %s", rootPath.string().c_str()));
+            throw new std::logic_error(fmt::format("root path is not absolute: {0}", rootPath.string()));
         }
         if (!std::filesystem::exists(rootPath))
         {
-            throw new std::runtime_error(format("root path does not exist: %s", rootPath.string().c_str()));
+            throw new std::runtime_error(fmt::format("root path does not exist: {0}", rootPath.string()));
         }
         if (!std::filesystem::is_directory(rootPath))
         {
-            throw new std::runtime_error(format("root path is not a directory: %s", rootPath.string().c_str()));
+            throw new std::runtime_error(fmt::format("root path is not a directory: {0}", rootPath.string()));
         }
     }
 
@@ -32,12 +32,12 @@ public:
         if (!path.is_relative())
         {
             throw new std::logic_error(
-                format("path must be relative: %s", path.string().c_str()));
+                fmt::format("path must be relative: {0}", path.string()));
         }
         const auto rootedPath = this->rootPath / path;
         if (!std::filesystem::exists(rootedPath))
         {
-            throw new std::runtime_error(format("file not found in VFS: %s", path.string().c_str()));
+            throw new std::runtime_error(fmt::format("file not found in VFS: {0}", path.string()));
         }
         std::ifstream inputFile(rootedPath);
         inputFile.exceptions(std::ios_base::badbit);

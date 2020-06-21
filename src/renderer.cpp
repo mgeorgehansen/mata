@@ -7,10 +7,11 @@
 #include <fstream>
 #include <sstream>
 #include <stdio.h>
+#include <fmt/core.h>
+#include <filesystem>
 
 #include "renderer.h"
 #include "virtual-file-system.h"
-#include "utils/string.h"
 
 using namespace gl;
 
@@ -42,15 +43,15 @@ class Renderer::Impl
         if (!success)
         {
             glGetProgramInfoLog(hShaderProgram, 512, NULL, infoLog);
-            throw new std::runtime_error(format(
-                "Failed to link shader program: %s", &infoLog));
+            throw new std::runtime_error(fmt::format(
+                "Failed to link shader program: {0}", std::string_view(infoLog)));
         }
         glDeleteShader(hFragmentShader);
         glDeleteShader(hVertexShader);
         return hShaderProgram;
     }
 
-    shader_h loadShader(std::string shaderName, GLenum shaderType)
+    shader_h loadShader(const std::filesystem::path& shaderPath, GLenum shaderType)
     {
         const shader_h hShader = glCreateShader(shaderType);
         if (hShader == 0)
@@ -59,7 +60,7 @@ class Renderer::Impl
         }
 
         const std::string shaderSrc = this->pVfs->readFile(
-            "shaders/" + shaderName);
+            "shaders" / shaderPath);
         const char *shaderSrcCstr = shaderSrc.c_str();
         glShaderSource(hShader, 1, &shaderSrcCstr, NULL);
         glCompileShader(hShader);
@@ -69,8 +70,8 @@ class Renderer::Impl
         if (!success)
         {
             glGetShaderInfoLog(hShader, 512, NULL, infoLog);
-            throw new std::runtime_error(format(
-                "Error compiling shader %s: %s", shaderName.c_str(), &infoLog));
+            throw new std::runtime_error(fmt::format(
+                "Error compiling shader {0}: {1}", shaderPath.string(), std::string_view(infoLog)));
         }
         return hShader;
     }
