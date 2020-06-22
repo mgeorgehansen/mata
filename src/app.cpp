@@ -3,12 +3,13 @@
 
 #include "app.h"
 #include "renderer.h"
+#include "concepts/noncopyable.h"
 #include "utils/filesystem.h"
 
-class App::Impl
+class App::Impl final: private noncopyable
 {
     GLFWwindow *pWindow;
-    std::shared_ptr<Renderer> pRenderer;
+    std::unique_ptr<Renderer> pRenderer;
 
     void processInput() const
     {
@@ -44,9 +45,9 @@ public:
 
         const auto vfs = std::make_shared<VirtualFileSystem>(
             execDir() / "resources");
-        const auto pRenderer = this->pRenderer = std::make_shared<Renderer>(vfs);
+        this->pRenderer = std::make_unique<Renderer>(vfs);
 
-        glfwSetWindowUserPointer(this->pWindow, pRenderer.get());
+        glfwSetWindowUserPointer(this->pWindow, this->pRenderer.get());
         glfwSetFramebufferSizeCallback(this->pWindow, [](GLFWwindow *pWindow, int width, int height) -> void {
             const auto renderer = reinterpret_cast<Renderer*>(glfwGetWindowUserPointer(pWindow));
             renderer->resize(width, height);
@@ -73,14 +74,9 @@ public:
     }
 };
 
-App::~App() = default;
+App::App(): pImpl(std::make_unique<Impl>()) {}
 
-App::App(App &&) = default;
-
-App &App::operator=(App &&) = default;
-
-App::App() : pImpl(std::make_unique<Impl>()) {}
-
+App::~App() noexcept = default;
 
 void App::run() const
 {

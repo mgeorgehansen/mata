@@ -5,8 +5,9 @@
 #include <fmt/core.h>
 
 #include "virtual-file-system.h"
+#include "concepts/noncopyable.h"
 
-class VirtualFileSystem::Impl
+class VirtualFileSystem::Impl final: noncopyable
 {
     std::filesystem::path rootPath;
 
@@ -53,13 +54,9 @@ public:
     }
 };
 
-VirtualFileSystem::~VirtualFileSystem() = default;
-
-VirtualFileSystem::VirtualFileSystem(VirtualFileSystem &&) = default;
-
-VirtualFileSystem &VirtualFileSystem::operator=(VirtualFileSystem &&) = default;
-
 VirtualFileSystem::VirtualFileSystem(const std::filesystem::path &rootPath) : pImpl(std::make_unique<Impl>(rootPath)) {}
+
+VirtualFileSystem::~VirtualFileSystem() noexcept = default;
 
 std::string VirtualFileSystem::readFile(const std::filesystem::path &path) const
 {

@@ -12,13 +12,14 @@
 
 #include "renderer.h"
 #include "virtual-file-system.h"
+#include "concepts/noncopyable.h"
 
 using namespace gl;
 
 typedef GLuint shaderprogram_h;
 typedef GLuint shader_h;
 
-class Renderer::Impl
+class Renderer::Impl final: private noncopyable
 {
     std::shared_ptr<VirtualFileSystem> pVfs;
     shaderprogram_h hShaderProgram = 0;
@@ -112,7 +113,6 @@ public:
     {
         this->hShaderProgram = this->initShaderProgram();
     }
-    ~Impl() = default;
 
     void drawFrame() const
     {
@@ -127,13 +127,9 @@ public:
     }
 };
 
-Renderer::~Renderer() = default;
-
-Renderer::Renderer(Renderer &&) = default;
-
-Renderer &Renderer::operator=(Renderer &&) = default;
-
 Renderer::Renderer(const std::shared_ptr<VirtualFileSystem> _pVfs) : pImpl(std::make_unique<Impl>(_pVfs)) {}
+
+Renderer::~Renderer() noexcept = default;
 
 void Renderer::drawFrame() const
 {

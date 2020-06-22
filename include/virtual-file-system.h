@@ -5,19 +5,16 @@
 #include <memory>
 #include <filesystem>
 
-class VirtualFileSystem final
+#include "concepts/noncopyable.h"
+
+class VirtualFileSystem final: private noncopyable
 {
     class Impl;
     std::experimental::propagate_const<std::unique_ptr<Impl>> pImpl;
 
 public:
     VirtualFileSystem(const std::filesystem::path &rootPath);
-    ~VirtualFileSystem();
-
-    VirtualFileSystem(VirtualFileSystem &&);
-    VirtualFileSystem &operator=(VirtualFileSystem &&);
-    VirtualFileSystem(const VirtualFileSystem &) = delete;
-    VirtualFileSystem &operator=(const VirtualFileSystem &) = delete;
+    ~VirtualFileSystem() noexcept;
 
     std::string readFile(const std::filesystem::path &path) const;
 };
