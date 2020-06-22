@@ -5,7 +5,7 @@
 #include <memory>
 #include <filesystem>
 
-class VirtualFileSystem
+class VirtualFileSystem final
 {
     class Impl;
     std::experimental::propagate_const<std::unique_ptr<Impl>> pImpl;

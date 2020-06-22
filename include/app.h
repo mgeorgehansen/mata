@@ -3,7 +3,7 @@
 #include <experimental/propagate_const>
 #include <memory>
 
-class App
+class App final
 {
     class Impl;
     std::experimental::propagate_const<std::unique_ptr<Impl>> pImpl;

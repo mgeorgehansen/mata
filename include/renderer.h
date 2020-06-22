@@ -5,7 +5,7 @@
 
 #include "virtual-file-system.h"
 
-class Renderer
+class Renderer final
 {
     class Impl;
     std::experimental::propagate_const<std::unique_ptr<Impl>> pImpl;
