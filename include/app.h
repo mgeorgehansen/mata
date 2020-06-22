@@ -5,14 +5,13 @@
 
 #include "concepts/noncopyable.h"
 
-class [[nodiscard]] App final: private noncopyable
-{
-    class Impl;
-    std::experimental::propagate_const<std::unique_ptr<Impl>> pImpl;
+class [[nodiscard]] App final : private noncopyable {
+  class Impl;
+  std::experimental::propagate_const<std::unique_ptr<Impl>> pImpl;
 
 public:
-    App();
-    ~App() noexcept;
+  App();
+  ~App() noexcept;
 
-    void run() const;
+  void run() const;
 };
