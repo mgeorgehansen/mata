@@ -6,7 +6,7 @@
 #include "concepts/noncopyable.h"
 #include "utils/filesystem.h"
 
-class App::Impl final: private noncopyable
+class [[nodiscard]] App::Impl final: private noncopyable
 {
     GLFWwindow *pWindow;
     std::unique_ptr<Renderer> pRenderer;

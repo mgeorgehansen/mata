@@ -19,7 +19,7 @@ using namespace gl;
 typedef GLuint shaderprogram_h;
 typedef GLuint shader_h;
 
-class Renderer::Impl final: private noncopyable
+class [[nodiscard]] Renderer::Impl final: private noncopyable
 {
     std::shared_ptr<VirtualFileSystem> pVfs;
     shaderprogram_h hShaderProgram = 0;
@@ -30,7 +30,7 @@ class Renderer::Impl final: private noncopyable
         glClear(ClearBufferMask::GL_COLOR_BUFFER_BIT);
     }
 
-    shaderprogram_h initShaderProgram() const
+    [[nodiscard]] shaderprogram_h initShaderProgram() const
     {
         const auto hVertexShader = this->loadShader("default.vert", GL_VERTEX_SHADER);
         const auto hFragmentShader = this->loadShader("default.frag", GL_FRAGMENT_SHADER);
@@ -52,7 +52,7 @@ class Renderer::Impl final: private noncopyable
         return hShaderProgram;
     }
 
-    shader_h loadShader(const std::filesystem::path& shaderPath, const GLenum shaderType) const
+    [[nodiscard]] shader_h loadShader(const std::filesystem::path& shaderPath, const GLenum shaderType) const
     {
         const shader_h hShader = glCreateShader(shaderType);
         if (hShader == 0)

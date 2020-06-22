@@ -6,7 +6,7 @@
 #include "concepts/noncopyable.h"
 #include "virtual-file-system.h"
 
-class Renderer final: private noncopyable
+class [[nodiscard]] Renderer final: private noncopyable
 {
     class Impl;
     std::experimental::propagate_const<std::unique_ptr<Impl>> pImpl;

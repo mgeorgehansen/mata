@@ -5,7 +5,7 @@
 
 #include "concepts/noncopyable.h"
 
-class App final: private noncopyable
+class [[nodiscard]] App final: private noncopyable
 {
     class Impl;
     std::experimental::propagate_const<std::unique_ptr<Impl>> pImpl;

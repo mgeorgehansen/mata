@@ -4,7 +4,7 @@
 #include <exception>
 #include <mach-o/dyld.h>
 
-std::filesystem::path execPath()
+[[nodiscard]] std::filesystem::path execPath()
 {
     // TODO: implement cross-platform.
     uint32_t size = 0;
@@ -14,7 +14,7 @@ std::filesystem::path execPath()
     return std::filesystem::canonical(buffer);
 }
 
-std::filesystem::path execDir()
+[[nodiscard]] std::filesystem::path execDir()
 {
     auto path = execPath();
     return path.remove_filename();

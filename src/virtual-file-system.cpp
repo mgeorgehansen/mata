@@ -7,7 +7,7 @@
 #include "virtual-file-system.h"
 #include "concepts/noncopyable.h"
 
-class VirtualFileSystem::Impl final: noncopyable
+class [[nodiscard]] VirtualFileSystem::Impl final: noncopyable
 {
     std::filesystem::path rootPath;
 
@@ -28,7 +28,7 @@ public:
         }
     }
 
-    std::string readFile(const std::filesystem::path &path) const
+    [[nodiscard]] std::string readFile(const std::filesystem::path &path) const
     {
         if (!path.is_relative())
         {
@@ -58,7 +58,7 @@ VirtualFileSystem::VirtualFileSystem(const std::filesystem::path &rootPath) : pI
 
 VirtualFileSystem::~VirtualFileSystem() noexcept = default;
 
-std::string VirtualFileSystem::readFile(const std::filesystem::path &path) const
+[[nodiscard]] std::string VirtualFileSystem::readFile(const std::filesystem::path &path) const
 {
     return this->pImpl->readFile(path);
 }
