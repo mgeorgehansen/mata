@@ -3,8 +3,10 @@
 #include <experimental/propagate_const>
 #include <memory>
 
-#include "concepts/noncopyable.h"
-#include "virtual-file-system.h"
+#include "concepts/noncopyable.hpp"
+#include "virtual-file-system.hpp"
+
+namespace mata {
 
 class [[nodiscard]] Renderer final : private noncopyable {
   class Impl;
@@ -17,3 +19,5 @@ public:
   void drawFrame() const;
   void resize(const int width, const int height) const;
 };
+
+} // namespace mata

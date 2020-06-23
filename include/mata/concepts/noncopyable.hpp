@@ -1,5 +1,7 @@
 #pragma once
 
+namespace mata {
+
 class noncopyable {
 protected:
   constexpr noncopyable() = default;
@@ -8,3 +10,5 @@ protected:
   noncopyable(const noncopyable &) = delete;
   noncopyable &operator=(const noncopyable &) = delete;
 };
+
+} // namespace mata

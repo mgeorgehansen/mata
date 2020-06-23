@@ -4,8 +4,10 @@
 #include <fstream>
 #include <string>
 
-#include "concepts/noncopyable.h"
-#include "virtual-file-system.h"
+#include <mata/concepts/noncopyable.hpp>
+#include <mata/virtual-file-system.hpp>
+
+namespace mata {
 
 class [[nodiscard]] VirtualFileSystem::Impl final : noncopyable {
   std::filesystem::path m_rootPath;
@@ -42,8 +44,8 @@ public:
     constexpr std::size_t readSize(4096);
     std::string buffer(readSize, '\0');
     while (inputFile.read(&buffer[0], readSize)) {
-      // KLUDGE: gcount() should never return a negative integer, so we're safe to
-      // static_cast here. Right...?
+      // KLUDGE: gcount() should never return a negative integer, so we're safe
+      // to static_cast here. Right...?
       fileContents.append(buffer, 0, static_cast<size_t>(inputFile.gcount()));
     }
     fileContents.append(buffer, 0, static_cast<size_t>(inputFile.gcount()));
@@ -60,3 +62,5 @@ VirtualFileSystem::~VirtualFileSystem() noexcept = default;
 VirtualFileSystem::readFile(const std::filesystem::path &path) const {
   return this->m_pImpl->readFile(path);
 }
+
+} // namespace mata

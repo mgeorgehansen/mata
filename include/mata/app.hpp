@@ -3,7 +3,9 @@
 #include <experimental/propagate_const>
 #include <memory>
 
-#include "concepts/noncopyable.h"
+#include "concepts/noncopyable.hpp"
+
+namespace mata {
 
 class [[nodiscard]] App final : private noncopyable {
   class Impl;
@@ -15,3 +17,5 @@ public:
 
   void run() const;
 };
+
+} // namespace mata

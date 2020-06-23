@@ -1,10 +1,12 @@
 #include <GLFW/glfw3.h>
 #include <glbinding/glbinding.h>
 
-#include "app.h"
-#include "concepts/noncopyable.h"
-#include "renderer.h"
-#include "utils/filesystem.h"
+#include <mata/app.hpp>
+#include <mata/concepts/noncopyable.hpp>
+#include <mata/renderer.hpp>
+#include <mata/utils/filesystem.hpp>
+
+namespace mata {
 
 class [[nodiscard]] App::Impl final : private noncopyable {
   GLFWwindow *m_pWindow{nullptr};
@@ -69,3 +71,5 @@ App::App() : m_pImpl(std::make_unique<Impl>()) {}
 App::~App() noexcept = default;
 
 void App::run() const { m_pImpl->run(); }
+
+} // namespace mata

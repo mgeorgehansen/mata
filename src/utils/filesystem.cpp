@@ -2,7 +2,9 @@
 #include <filesystem>
 #include <mach-o/dyld.h>
 
-#include "utils/filesystem.h"
+#include <mata/utils/filesystem.hpp>
+
+namespace mata {
 
 [[nodiscard]] static std::filesystem::path execPath() {
   // TODO: implement cross-platform.
@@ -17,3 +19,5 @@
   auto path = execPath();
   return path.remove_filename();
 }
+
+} // namespace mata

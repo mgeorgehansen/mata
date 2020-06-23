@@ -4,11 +4,11 @@
 #include <memory>
 #include <string>
 
-#include "app.h"
+#include <mata/lib.hpp>
 
 int main() {
   try {
-    const App app;
+    const mata::App app;
     app.run();
   } catch (std::exception *error) {
     std::cout << "error: " << error->what() << std::endl;

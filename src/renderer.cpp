@@ -10,9 +10,11 @@
 #include <stdio.h>
 #include <string>
 
-#include "concepts/noncopyable.h"
-#include "renderer.h"
-#include "virtual-file-system.h"
+#include <mata/concepts/noncopyable.hpp>
+#include <mata/renderer.hpp>
+#include <mata/virtual-file-system.hpp>
+
+namespace mata {
 
 using namespace gl;
 
@@ -123,3 +125,5 @@ void Renderer::drawFrame() const { m_pImpl->drawFrame(); }
 void Renderer::resize(const int width, const int height) const {
   m_pImpl->resize(width, height);
 }
+
+} // namespace mata

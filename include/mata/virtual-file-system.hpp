@@ -5,7 +5,9 @@
 #include <memory>
 #include <string>
 
-#include "concepts/noncopyable.h"
+#include "concepts/noncopyable.hpp"
+
+namespace mata {
 
 class [[nodiscard]] VirtualFileSystem final : private noncopyable {
   class Impl;
@@ -17,3 +19,5 @@ public:
 
   [[nodiscard]] std::string readFile(const std::filesystem::path &path) const;
 };
+
+} // namespace mata
