@@ -14,7 +14,7 @@ class [[nodiscard]] VirtualFileSystem final : private noncopyable {
   std::experimental::propagate_const<std::unique_ptr<Impl>> m_pImpl;
 
 public:
-  VirtualFileSystem(const std::filesystem::path &rootPath);
+  explicit VirtualFileSystem(const std::filesystem::path &rootPath);
   ~VirtualFileSystem() noexcept;
 
   [[nodiscard]] std::string readFile(const std::filesystem::path &path) const;

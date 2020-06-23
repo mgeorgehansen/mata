@@ -13,7 +13,7 @@ class [[nodiscard]] Renderer final : private noncopyable {
   std::experimental::propagate_const<std::unique_ptr<Impl>> m_pImpl;
 
 public:
-  Renderer(const std::shared_ptr<VirtualFileSystem>);
+  explicit Renderer(const std::shared_ptr<VirtualFileSystem>);
   ~Renderer() noexcept;
 
   void drawFrame() const;
