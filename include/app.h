@@ -7,7 +7,7 @@
 
 class [[nodiscard]] App final : private noncopyable {
   class Impl;
-  std::experimental::propagate_const<std::unique_ptr<Impl>> pImpl;
+  std::experimental::propagate_const<std::unique_ptr<Impl>> m_pImpl;
 
 public:
   App();

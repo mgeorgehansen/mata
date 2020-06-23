@@ -20,8 +20,8 @@ typedef GLuint shaderprogram_h;
 typedef GLuint shader_h;
 
 class [[nodiscard]] Renderer::Impl final : private noncopyable {
-  std::shared_ptr<VirtualFileSystem> pVfs;
-  shaderprogram_h hShaderProgram = 0;
+  std::shared_ptr<VirtualFileSystem> m_pVfs;
+  shaderprogram_h m_hShaderProgram{0};
 
   void clearScreen() const {
     glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
@@ -41,7 +41,7 @@ class [[nodiscard]] Renderer::Impl final : private noncopyable {
     glGetProgramiv(hShaderProgram, GL_LINK_STATUS, &success);
     if (!success) {
       char infoLog[512];
-      glGetProgramInfoLog(hShaderProgram, 512, NULL, infoLog);
+      glGetProgramInfoLog(hShaderProgram, 512, nullptr, infoLog);
       throw new std::runtime_error(fmt::format(
           "Failed to link shader program: {0}", std::string_view(infoLog)));
     }
@@ -57,15 +57,16 @@ class [[nodiscard]] Renderer::Impl final : private noncopyable {
       throw new std::runtime_error("Failed to create shader object");
     }
 
-    const std::string shaderSrc = this->pVfs->readFile("shaders" / shaderPath);
+    const std::string shaderSrc =
+        this->m_pVfs->readFile("shaders" / shaderPath);
     const char *shaderSrcCstr = shaderSrc.c_str();
-    glShaderSource(hShader, 1, &shaderSrcCstr, NULL);
+    glShaderSource(hShader, 1, &shaderSrcCstr, nullptr);
     glCompileShader(hShader);
     int success;
     glGetShaderiv(hShader, GL_COMPILE_STATUS, &success);
     if (!success) {
       char infoLog[512];
-      glGetShaderInfoLog(hShader, 512, NULL, infoLog);
+      glGetShaderInfoLog(hShader, 512, nullptr, infoLog);
       throw new std::runtime_error(
           fmt::format("Error compiling shader {0}: {1}", shaderPath.string(),
                       std::string_view(infoLog)));
@@ -88,17 +89,17 @@ class [[nodiscard]] Renderer::Impl final : private noncopyable {
     glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
 
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float),
-                          (void *)0);
+                          static_cast<void *>(nullptr));
     glEnableVertexAttribArray(0);
 
-    glUseProgram(this->hShaderProgram);
+    glUseProgram(this->m_hShaderProgram);
     glBindVertexArray(vao);
     glDrawArrays(GL_TRIANGLES, 0, 3);
   }
 
 public:
-  Impl(const std::shared_ptr<VirtualFileSystem> _pVfs) : pVfs(_pVfs) {
-    this->hShaderProgram = this->initShaderProgram();
+  Impl(const std::shared_ptr<VirtualFileSystem> _pVfs) : m_pVfs(_pVfs) {
+    this->m_hShaderProgram = this->initShaderProgram();
   }
 
   void drawFrame() const {
@@ -113,12 +114,12 @@ public:
 };
 
 Renderer::Renderer(const std::shared_ptr<VirtualFileSystem> _pVfs)
-    : pImpl(std::make_unique<Impl>(_pVfs)) {}
+    : m_pImpl(std::make_unique<Impl>(_pVfs)) {}
 
 Renderer::~Renderer() noexcept = default;
 
-void Renderer::drawFrame() const { pImpl->drawFrame(); }
+void Renderer::drawFrame() const { m_pImpl->drawFrame(); }
 
 void Renderer::resize(const int width, const int height) const {
-  pImpl->resize(width, height);
+  m_pImpl->resize(width, height);
 }
