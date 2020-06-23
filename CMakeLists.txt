@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.14)
+cmake_minimum_required(VERSION 3.11)
 project(
   mata
   VERSION 0.1.0
@@ -34,7 +34,7 @@ if(CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME)
 
   # Based on
   # https://github.com/lefticus/cppbestpractices/blob/master/02-Use_the_Tools_Available.md#compilers
-  if(MSVC)
+  if(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
     add_compile_options(
       /WX
       /permissive
@@ -59,8 +59,35 @@ if(CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME)
       /w14905
       /w14906
       /w14928)
-  else()
+  elseif(CMAKE_CXX_COMPILER_ID MATCHES "Clang")
     add_compile_options(-Werror -Weverything -Wno-c++98-compat -Wno-padded)
+  elseif(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+    add_compile_options(
+      -Werror
+      -Wall
+      -Wextra
+      -Wshadow
+      -Wnon-virtual-dtor
+      -Wpedantic
+      -Wold-style-cast
+      -Wcast-align
+      -Wunused
+      -Woverloaded-virtual
+      -Wconversion
+      -Wsign-conversion
+      -Wmisleading-indentation
+      -Wduplicated-cond
+      -Wduplicated-branches
+      -Wlogical-op
+      -Wnull-dereference
+      -Wuseless-cast
+      -Wdouble-promotion
+      -Wformat=2)
+  else()
+    message(
+      WARNING
+        "Unsupported compiler ${CMAKE_CXX_COMPILER_ID} will have no compiler options set"
+    )
   endif()
 
   # Add DEBUG definition for debug builds.
