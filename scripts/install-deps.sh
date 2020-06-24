@@ -1,6 +1,6 @@
 #!/bin/bash
 
-ROOT_DIR=$(cwd)
+ROOT_DIR=$(pwd)
 
 git clone https://github.com/Microsoft/vcpkg.git &&
   cd vcpkg &&
