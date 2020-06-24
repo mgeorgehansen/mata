@@ -9,10 +9,10 @@ matrix:
           sources:
             - ubuntu-toolchain-r-test
           packages:
-            - g++-7.4
+            - g++-7
       env:
         - CMAKE_CONFIGURATION=Release
-        - MATRIX_EVAL="CC=gcc-7.4 && CXX=g++-7.4"
+        - MATRIX_EVAL="CC=gcc-7 && CXX=g++-7"
 
     - os: linux
       compiler: gcc
@@ -21,10 +21,10 @@ matrix:
           sources:
             - ubuntu-toolchain-r-test
           packages:
-            - g++-7.4
+            - g++-7
       env:
         - CMAKE_CONFIGURATION=Debug
-        - MATRIX_EVAL="CC=gcc-7.4 && CXX=g++-7.4"
+        - MATRIX_EVAL="CC=gcc-7 && CXX=g++-7"
 
 before_install:
   - eval "${MATRIX_EVAL}"
