@@ -1,5 +1,9 @@
 language: c++
 
+cache:
+  directories:
+    - vcpkg
+
 matrix:
   include:
     - os: linux
