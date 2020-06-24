@@ -4,17 +4,34 @@ matrix:
   include:
     - os: linux
       compiler: gcc
-      env: CMAKE_CONFIGURATION=Release
+      addons:
+        apt:
+          sources:
+            - ubuntu-toolchain-r-test
+          packages:
+            - g++-7.4
+      env:
+        - CMAKE_CONFIGURATION=Release
+        - MATRIX_EVAL="CC=gcc-7.4 && CXX=g++-7.4"
 
     - os: linux
       compiler: gcc
-      env: CMAKE_CONFIGURATION=Debug
+      addons:
+        apt:
+          sources:
+            - ubuntu-toolchain-r-test
+          packages:
+            - g++-7.4
+      env:
+        - CMAKE_CONFIGURATION=Debug
+        - MATRIX_EVAL="CC=gcc-7.4 && CXX=g++-7.4"
 
 before_install:
+  - eval "${MATRIX_EVAL}"
   - ./scripts/install-deps.sh
 
 before_script:
-  - mkdir build && cd build && cmake ..
+  - mkdir build && cd build && cmake -DCMAKE_TOOLCHAIN_FILE=./vcpkg/libexec/scripts/buildsystems/vcpkg.cmake ..
 
 script:
   - travis_wait cmake --build build/
