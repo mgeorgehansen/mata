@@ -10,6 +10,10 @@ matrix:
             - ubuntu-toolchain-r-test
           packages:
             - g++-7
+            - libxinerama-dev
+            - libxcursor-dev
+            - xorg-dev
+            - libglu1-mesa-dev
       env:
         - CMAKE_CONFIGURATION=Release
         - MATRIX_EVAL="CC=gcc-7 && CXX=g++-7"
@@ -22,6 +26,10 @@ matrix:
             - ubuntu-toolchain-r-test
           packages:
             - g++-7
+            - libxinerama-dev
+            - libxcursor-dev
+            - xorg-dev
+            - libglu1-mesa-dev
       env:
         - CMAKE_CONFIGURATION=Debug
         - MATRIX_EVAL="CC=gcc-7 && CXX=g++-7"
