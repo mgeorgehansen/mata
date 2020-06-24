@@ -1,0 +1,23 @@
+language: c++
+
+matrix:
+  include:
+    - os: linux
+      compiler:
+        - clang
+        - gcc
+      env: CMAKE_CONFIGURATION=Release
+
+    - os: linux
+      compiler:
+        - clang
+        - gcc
+      env: CMAKE_CONFIGURATION=Debug
+
+before_script:
+  - ./scripts/install-deps.sh
+  - mkdir build && cd build && cmake ..
+
+script:
+  - travis_wait cmake --build build/
+  - ctest
