@@ -124,10 +124,17 @@ if(CLANG_TIDY_EXE)
 endif()
 set(CMAKE_CXX_LINK_WHAT_YOU_USE ON)
 
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake")
+
+set(CMAKE_FIND_PACKAGE_SORT_ORDER NATURAL)
+set(CMAKE_FIND_PACKAGE_SORT_DIRECTION DEC)
+find_package(Filesystem REQUIRED)
 find_package(OpenGL REQUIRED)
-find_package(glfw3 CONFIG REQUIRED)
+find_package(glfw3 3.3.2 CONFIG REQUIRED)
+# FIXME: glbinding appearently doesn't expose its version in its CMake config,
+# so we can't require a specific version. There might be a workaround.
 find_package(glbinding CONFIG REQUIRED)
-find_package(fmt CONFIG REQUIRED)
+find_package(fmt 6.2.1 CONFIG REQUIRED)
 
 add_subdirectory(src)
 add_subdirectory(apps)
