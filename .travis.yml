@@ -3,19 +3,17 @@ language: c++
 matrix:
   include:
     - os: linux
-      compiler:
-        - clang
-        - gcc
+      compiler: gcc
       env: CMAKE_CONFIGURATION=Release
 
     - os: linux
-      compiler:
-        - clang
-        - gcc
+      compiler: gcc
       env: CMAKE_CONFIGURATION=Debug
 
-before_script:
+before_install:
   - ./scripts/install-deps.sh
+
+before_script:
   - mkdir build && cd build && cmake ..
 
 script:
