@@ -43,7 +43,7 @@ before_install:
   - ./scripts/install-deps.sh
 
 before_script:
-  - mkdir build && cd build && cmake -DCMAKE_TOOLCHAIN_FILE=./vcpkg/libexec/scripts/buildsystems/vcpkg.cmake ..
+  - mkdir build && cd build && cmake -DCMAKE_TOOLCHAIN_FILE="$TRAVIS_BUILD_DIR/vcpkg/libexec/scripts/buildsystems/vcpkg.cmake" ..
 
 script:
   - travis_wait cmake --build build/
