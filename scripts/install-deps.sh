@@ -1,6 +1,6 @@
 #!/bin/bash
 
-VCPKG_DIR="$TRAVIS_BUILD_DIR/vcpkg"
+VCPKG_DIR="$HOME/vcpkg"
 VCPKG="$VCPKG_DIR/vcpkg"
 export VCPKG_CMAKE_TOOLCHAIN="$VCPKG_DIR/scripts/buildsystems/vcpkg.cmake"
 
