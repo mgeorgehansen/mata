@@ -79,12 +79,7 @@ if(CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME)
       -Woverloaded-virtual
       -Wconversion
       -Wsign-conversion
-      -Wmisleading-indentation
-      -Wduplicated-cond
-      -Wduplicated-branches
-      -Wlogical-op
       -Wnull-dereference
-      -Wuseless-cast
       -Wdouble-promotion
       -Wformat=2)
   else()
