@@ -46,5 +46,5 @@ before_script:
   - mkdir build && cd build && cmake -DCMAKE_TOOLCHAIN_FILE="$VCPKG_CMAKE_TOOLCHAIN" ..
 
 script:
-  - travis_wait cmake --build build/
+  - travis_wait cmake --build .
   - ctest
