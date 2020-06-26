@@ -4,71 +4,33 @@ cache:
   directories:
     - $HOME/vcpkg
 
+os:
+  - linux
+  - osx
+dist: bionic
+osx_image: xcode11.3
+compiler:
+  - clang
+  - gcc
+addons:
+  apt:
+    packages:
+      - libxinerama-dev
+      - libxcursor-dev
+      - xorg-dev
+      - libglu1-mesa-dev
+
 matrix:
-  include:
+  exclude:
     - os: linux
       compiler: clang
-      addons:
-        apt:
-          packages:
-            - libxinerama-dev
-            - libxcursor-dev
-            - xorg-dev
-            - libglu1-mesa-dev
-      env:
-        - CMAKE_CONFIGURATION=Release
-
-    - os: linux
-      compiler: clang
-      addons:
-        apt:
-          packages:
-            - libxinerama-dev
-            - libxcursor-dev
-            - xorg-dev
-            - libglu1-mesa-dev
-      env:
-        - CMAKE_CONFIGURATION=Debug
-
-    - os: linux
+    - os: osx
       compiler: gcc
-      addons:
-        apt:
-          sources:
-            - ubuntu-toolchain-r-test
-          packages:
-            - g++-8
-            - libxinerama-dev
-            - libxcursor-dev
-            - xorg-dev
-            - libglu1-mesa-dev
-      env:
-        - CMAKE_CONFIGURATION=Release
-        - MATRIX_EVAL="CC=gcc-8 && CXX=g++-8"
-
-    - os: linux
-      compiler: gcc
-      addons:
-        apt:
-          sources:
-            - ubuntu-toolchain-r-test
-          packages:
-            - g++-8
-            - libxinerama-dev
-            - libxcursor-dev
-            - xorg-dev
-            - libglu1-mesa-dev
-      env:
-        - CMAKE_CONFIGURATION=Debug
-        - MATRIX_EVAL="CC=gcc-8 && CXX=g++-8"
-
-before_install:
-  - eval "${MATRIX_EVAL}"
-  - source scripts/install-deps.sh
 
 before_script:
-  - mkdir build && cd build && cmake -DCMAKE_TOOLCHAIN_FILE="$VCPKG_CMAKE_TOOLCHAIN" ..
+  - source scripts/install-deps.sh
 
 script:
+  - mkdir build && cd build && cmake -DCMAKE_TOOLCHAIN_FILE="$VCPKG_CMAKE_TOOLCHAIN" ..
   - travis_wait cmake --build .
   - ctest
