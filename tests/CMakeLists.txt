@@ -2,11 +2,7 @@
 # v. 2.0. If a copy of the MPL was not distributed with this file, You can
 # obtain one at https://mozilla.org/MPL/2.0/.
 
-FetchContent_Declare(
-  catch2
-  GIT_REPOSITORY https://github.com/catchorg/Catch2.git
-  GIT_TAG v2.9.1)
-FetchContent_MakeAvailable(catch2)
+find_package(Catch2 CONFIG REQUIRED)
 
 add_executable(mata_test test.cpp)
 target_compile_features(mata_test PRIVATE cxx_std_17)

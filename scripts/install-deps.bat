@@ -23,4 +23,4 @@ if not exist %VCPKG% (
 cd "%cwd%"
 
 echo "installing deps..."
-%VCPKG% install fmt glfw3 glbinding || exit /b 1
+%VCPKG% install fmt glfw3 glbinding catch2 || exit /b 1

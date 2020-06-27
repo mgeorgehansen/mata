@@ -19,4 +19,4 @@ fi
 
 cd "$cwd"
 
-"$VCPKG" install fmt glfw3 glbinding
+"$VCPKG" install fmt glfw3 glbinding catch2
