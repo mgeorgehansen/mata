@@ -12,6 +12,7 @@
 #include <mach-o/dyld.h>
 #elif defined(PLATFORM_WINDOWS)
 #include <Windows.h>
+#include <vector>
 #elif defined(PLATFORM_LINUX)
 #include <limits.h>
 #include <unistd.h>
@@ -29,15 +30,15 @@ namespace mata {
   _NSGetExecutablePath(buffer, &size);
   return std::filesystem::canonical(buffer);
 #elif defined(PLATFORM_WINDOWS)
-  std::vector<char> buf(1024, 0);
-  auto size = buf.size();
+  std::vector<char> buffer(1024);
+  auto size = buffer.size();
   auto havePath = false;
   auto shouldContinue = true;
   // Keep trying to load the exec path into buffer, doubling the buffer size
   // each time if the buffer is too small.
   // TODO: limit number of resizes to prevent unbounded memory usage.
   do {
-    auto result = GetModuleFileNameA(nullptr, &buf[0], size);
+    auto result = GetModuleFileNameA(nullptr, &buffer[0], size);
     auto lastError = GetLastError();
     if (result == 0) {
       shouldContinue = false;
@@ -48,7 +49,7 @@ namespace mata {
                                   lastError == ERROR_SUCCESS)) {
       // Path is larger than our buffer, so double the buffer and try again.
       size *= 2;
-      buf.resize(size);
+      buffer.resize(size);
     } else {
       shouldContinue = false;
     }
@@ -56,7 +57,7 @@ namespace mata {
   if (!havePath) {
     throw std::runtime_error("failed to find exec path");
   }
-  return std::filesystem::path(buf);
+  return std::filesystem::path(buffer.begin(), buffer.end());
 #elif defined(PLATFORM_LINUX)
   char result[PATH_MAX];
   const ssize_t count = readlink("/proc/self/exe", result, PATH_MAX);
