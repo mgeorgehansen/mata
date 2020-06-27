@@ -9,11 +9,11 @@
 #include <mata/utils/filesystem.hpp>
 #include <mata/utils/platform.hpp>
 
-#if defined(PLATFORM_MACOS)
+#if MATA_OS_MACOS
 #include <mach-o/dyld.h>
-#elif defined(PLATFORM_WINDOWS)
+#elif MATA_OS_WINDOWS
 #include <Windows.h>
-#elif defined(PLATFORM_LINUX)
+#elif MATA_OS_LINUX
 #include <limits.h>
 #include <unistd.h>
 #else
@@ -23,14 +23,14 @@
 namespace mata {
 
 [[nodiscard]] static std::filesystem::path execPath() {
-#if defined(PLATFORM_MACOS)
+#if MATA_OS_MACOS
   uint32_t size = 0;
   _NSGetExecutablePath(nullptr, &size);
   std::vector<char> buffer(size);
   _NSGetExecutablePath(&buffer[0], &size);
   const std::filesystem::path path(buffer.begin(), buffer.end());
   return std::filesystem::canonical(path);
-#elif defined(PLATFORM_WINDOWS)
+#elif MATA_OS_WINDOWS
   std::vector<char> buffer(1024);
   auto size = buffer.size();
   auto havePath = false;
@@ -59,7 +59,7 @@ namespace mata {
     throw std::runtime_error("failed to find exec path");
   }
   return std::filesystem::path(buffer.begin(), buffer.end());
-#elif defined(PLATFORM_LINUX)
+#elif MATA_OS_LINUX
   char result[PATH_MAX];
   const ssize_t count = readlink("/proc/self/exe", result, PATH_MAX);
   return std::string(result, static_cast<unsigned long>(count > 0 ? count : 0));

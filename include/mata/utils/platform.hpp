@@ -4,10 +4,17 @@
 
 #pragma once
 
+#define MATA_OS_WINDOWS 0
+#define MATA_OS_LINUX 0
+#define MATA_OS_MACOS 0
+
 #if defined(_WIN32) || defined(_WIN64)
-#define PLATFORM_WINDOWS
+#undef MATA_OS_WINDOWS
+#define MATA_OS_WINDOWS 1
 #elif defined(__LINUX__)
-#define PLATFORM_LINUX
+#undef MATA_OS_LINUX
+#define MATA_OS_LINUX 1
 #elif defined(__APPLE__)
-#define PLATFORM_MACOS
+#undef MATA_OS_MACOS
+#define MATA_OS_MACOS 1
 #endif
