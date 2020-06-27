@@ -25,19 +25,19 @@ matrix:
             - xorg-dev
             - libglu1-mesa-dev
       before_script:
-        - ./scripts/install-deps.sh
+        - travis_wait ./scripts/install-deps.sh
       script:
         - travis_wait ./scripts/build.sh
 
     - os: osx
       osx_image: xcode11.4
       before_script:
-        - ./scripts/install-deps.sh
+        - travis_wait ./scripts/install-deps.sh
       script:
         - travis_wait ./scripts/build.sh
 
     - os: windows
       before_script:
-        - ./scripts/install-deps.bat
+        - travis_wait ./scripts/install-deps.bat
       script:
         - travis_wait ./scripts/build.bat
