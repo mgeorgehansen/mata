@@ -2,7 +2,7 @@
 
 setlocal
 
-set "VCPKG_HOME=" || set "VCPKG_HOME=%USERPROFILE%\vcpkg"
+if not defined VCPKG_HOME set "VCPKG_HOME=%USERPROFILE%\vcpkg"
 set VCPKG="%VCPKG_HOME%\vcpkg.exe"
 echo "using VCPKG_HOME=%VCPKG_HOME%"
 
@@ -15,4 +15,4 @@ if exist %VCPKG% (
   cd "%cwd%"
 )
 
-"$VCPKG" install fmt glfw3 glbinding
+"%VCPKG%" install fmt glfw3 glbinding
