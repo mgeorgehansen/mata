@@ -57,7 +57,6 @@ if(CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME)
       /w14547
       /w14549
       /w14555
-      /w14619
       /w14640
       /w14826
       /w14905
