@@ -1,6 +1,7 @@
 language: c++
 
 cache:
+  apt: true
   directories:
     - $VCPKG_HOME
 
