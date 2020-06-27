@@ -4,6 +4,7 @@
 
 #include <exception>
 #include <filesystem>
+#include <vector>
 
 #include <mata/utils/filesystem.hpp>
 #include <mata/utils/platform.hpp>
@@ -12,7 +13,6 @@
 #include <mach-o/dyld.h>
 #elif defined(PLATFORM_WINDOWS)
 #include <Windows.h>
-#include <vector>
 #elif defined(PLATFORM_LINUX)
 #include <limits.h>
 #include <unistd.h>
@@ -26,9 +26,10 @@ namespace mata {
 #if defined(PLATFORM_MACOS)
   uint32_t size = 0;
   _NSGetExecutablePath(nullptr, &size);
-  const auto buffer = new char[size];
-  _NSGetExecutablePath(buffer, &size);
-  return std::filesystem::canonical(buffer);
+  std::vector<char> buffer(size);
+  _NSGetExecutablePath(&buffer[0], &size);
+  const std::filesystem::path path(buffer.begin(), buffer.end());
+  return std::filesystem::canonical(path);
 #elif defined(PLATFORM_WINDOWS)
   std::vector<char> buffer(1024);
   auto size = buffer.size();
