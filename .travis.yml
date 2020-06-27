@@ -2,7 +2,10 @@ language: c++
 
 cache:
   directories:
-    - $HOME/vcpkg
+    - $VCPKG_HOME
+
+env:
+  - VCPKG_HOME="$HOME/vcpkg"
 
 os:
   - linux
@@ -28,9 +31,9 @@ matrix:
       compiler: gcc
 
 before_script:
-  - source scripts/install-deps.sh
+  - ./scripts/install-deps.sh
 
 script:
-  - mkdir build && cd build && cmake -DCMAKE_TOOLCHAIN_FILE="$VCPKG_CMAKE_TOOLCHAIN" ..
+  - mkdir build && cd build && cmake -DCMAKE_TOOLCHAIN_FILE="$VCPKG_HOME/scripts/buildsystems/vcpkg.cmake" ..
   - travis_wait cmake --build .
   - ctest
