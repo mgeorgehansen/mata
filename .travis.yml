@@ -6,7 +6,8 @@ cache:
     - $VCPKG_HOME
 
 env:
-  - VCPKG_HOME="$HOME/vcpkg"
+  global:
+    - VCPKG_HOME="$HOME/vcpkg"
 
 matrix:
   include:
@@ -14,8 +15,7 @@ matrix:
       dist: bionic
       compiler: gcc
       env:
-        - CC=gcc-8
-        - CXX=g++-8
+        - CC=gcc-8 CXX=g++-8
       addons:
         apt:
           packages:
