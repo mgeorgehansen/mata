@@ -19,12 +19,18 @@ compiler:
 addons:
   apt:
     packages:
+      - g++-8
       - libxinerama-dev
       - libxcursor-dev
       - xorg-dev
       - libglu1-mesa-dev
 
 matrix:
+  include:
+    - os: linux
+      env:
+        - CC=gcc-8
+        - CXX=g++-8
   exclude:
     - os: linux
       compiler: clang
