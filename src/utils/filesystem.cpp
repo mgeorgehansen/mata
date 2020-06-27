@@ -56,7 +56,7 @@ namespace mata {
   if (!havePath) {
     throw std::runtime_error("failed to find exec path");
   }
-  return &result;
+  return std::filesystem::path(buf);
 #elif defined(PLATFORM_LINUX)
   char result[PATH_MAX];
   const ssize_t count = readlink("/proc/self/exe", result, PATH_MAX);
