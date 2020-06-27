@@ -8,34 +8,24 @@ cache:
 env:
   - VCPKG_HOME="$HOME/vcpkg"
 
-os:
-  - linux
-  - osx
-dist: bionic
-osx_image: xcode11.4
-compiler:
-  - clang
-  - gcc
-addons:
-  apt:
-    packages:
-      - g++-8
-      - libxinerama-dev
-      - libxcursor-dev
-      - xorg-dev
-      - libglu1-mesa-dev
-
 matrix:
   include:
     - os: linux
+      dist: bionic
+      compiler: gcc
       env:
         - CC=gcc-8
         - CXX=g++-8
-  exclude:
-    - os: linux
-      compiler: clang
+      addons:
+        apt:
+          packages:
+            - g++-8
+            - libxinerama-dev
+            - libxcursor-dev
+            - xorg-dev
+            - libglu1-mesa-dev
     - os: osx
-      compiler: gcc
+      osx_image: xcode11.4
 
 before_script:
   - ./scripts/install-deps.sh
