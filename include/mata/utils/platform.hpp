@@ -11,7 +11,7 @@
 #if defined(_WIN32) || defined(_WIN64)
 #undef MATA_OS_WINDOWS
 #define MATA_OS_WINDOWS 1
-#elif defined(__LINUX__)
+#elif defined(__linux__)
 #undef MATA_OS_LINUX
 #define MATA_OS_LINUX 1
 #elif defined(__APPLE__)
