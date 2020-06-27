@@ -4,27 +4,31 @@
 
 #include <exception>
 #include <filesystem>
-#if defined(__APPLE__)
-#include <mach-o/dyld.h>
-#elif defined(_MSC_VER)
-#include <Windows.h>
-#else
-#include <limits.h>
-#include <unistd.h>
-#endif
 
 #include <mata/utils/filesystem.hpp>
+#include <mata/utils/platform.hpp>
+
+#if defined(PLATFORM_MACOS)
+#include <mach-o/dyld.h>
+#elif defined(PLATFORM_WINDOWS)
+#include <Windows.h>
+#elif defined(PLATFORM_LINUX)
+#include <limits.h>
+#include <unistd.h>
+#else
+#error "Unknown platform is unsupported"
+#endif
 
 namespace mata {
 
 [[nodiscard]] static std::filesystem::path execPath() {
-#if defined(__APPLE__)
+#if defined(PLATFORM_MACOS)
   uint32_t size = 0;
   _NSGetExecutablePath(nullptr, &size);
   const auto buffer = new char[size];
   _NSGetExecutablePath(buffer, &size);
   return std::filesystem::canonical(buffer);
-#elif defined(_MSVC_VER)
+#elif defined(PLATFORM_WINDOWS)
   std::vector<char> buf(1024, 0);
   auto size = buf.size();
   auto havePath = false;
@@ -49,7 +53,11 @@ namespace mata {
       shouldContinue = false;
     }
   } while (shouldContinue);
-#else
+  if (!havePath) {
+    throw std::runtime_error("failed to find exec path");
+  }
+  return &result;
+#elif defined(PLATFORM_LINUX)
   char result[PATH_MAX];
   const ssize_t count = readlink("/proc/self/exe", result, PATH_MAX);
   return std::string(result, static_cast<unsigned long>(count > 0 ? count : 0));
