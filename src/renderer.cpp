@@ -48,8 +48,8 @@ class [[nodiscard]] Renderer::Impl final : private noncopyable {
     if (!success) {
       char infoLog[512];
       glGetProgramInfoLog(hShaderProgram, 512, nullptr, infoLog);
-      throw new std::runtime_error(fmt::format(
-          "Failed to link shader program: {0}", std::string_view(infoLog)));
+      throw std::runtime_error(fmt::format("Failed to link shader program: {0}",
+                                           std::string_view(infoLog)));
     }
     glDeleteShader(hFragmentShader);
     glDeleteShader(hVertexShader);
@@ -60,7 +60,7 @@ class [[nodiscard]] Renderer::Impl final : private noncopyable {
                                     const GLenum shaderType) const {
     const shader_h hShader = glCreateShader(shaderType);
     if (hShader == 0) {
-      throw new std::runtime_error("Failed to create shader object");
+      throw std::runtime_error("Failed to create shader object");
     }
 
     const std::string shaderSrc =
@@ -73,9 +73,9 @@ class [[nodiscard]] Renderer::Impl final : private noncopyable {
     if (!success) {
       char infoLog[512];
       glGetShaderInfoLog(hShader, 512, nullptr, infoLog);
-      throw new std::runtime_error(
-          fmt::format("Error compiling shader {0}: {1}", shaderPath.string(),
-                      std::string_view(infoLog)));
+      throw std::runtime_error(fmt::format("Error compiling shader {0}: {1}",
+                                           shaderPath.string(),
+                                           std::string_view(infoLog)));
     }
     return hShader;
   }

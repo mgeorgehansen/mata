@@ -19,27 +19,27 @@ class [[nodiscard]] VirtualFileSystem::Impl final : noncopyable {
 public:
   Impl(const std::filesystem::path &rootPath) : m_rootPath(rootPath) {
     if (!rootPath.is_absolute()) {
-      throw new std::logic_error(
+      throw std::logic_error(
           fmt::format("root path is not absolute: {0}", rootPath.string()));
     }
     if (!std::filesystem::exists(rootPath)) {
-      throw new std::runtime_error(
+      throw std::runtime_error(
           fmt::format("root path does not exist: {0}", rootPath.string()));
     }
     if (!std::filesystem::is_directory(rootPath)) {
-      throw new std::runtime_error(
+      throw std::runtime_error(
           fmt::format("root path is not a directory: {0}", rootPath.string()));
     }
   }
 
   [[nodiscard]] std::string readFile(const std::filesystem::path &path) const {
     if (!path.is_relative()) {
-      throw new std::logic_error(
+      throw std::logic_error(
           fmt::format("path must be relative: {0}", path.string()));
     }
     const auto rootedPath = this->m_rootPath / path;
     if (!std::filesystem::exists(rootedPath)) {
-      throw new std::runtime_error(
+      throw std::runtime_error(
           fmt::format("file not found in VFS: {0}", path.string()));
     }
     std::ifstream inputFile(rootedPath);

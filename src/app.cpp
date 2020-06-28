@@ -35,7 +35,7 @@ public:
 
     this->m_pWindow = glfwCreateWindow(800, 600, "Mata", nullptr, nullptr);
     if (nullptr == this->m_pWindow) {
-      throw new std::runtime_error("Failed to create GLFW Window");
+      throw std::runtime_error("Failed to create GLFW Window");
     }
     glfwMakeContextCurrent(this->m_pWindow);
 
