@@ -6,4 +6,7 @@
 #include <catch2/catch.hpp>
 #include <mata/lib.hpp>
 
-TEST_CASE("Quick check", "[main]") { REQUIRE(2.0 == 2.0); }
+TEST_CASE("Smoke test", "[main]") {
+  const mata::App app;
+  app.stepFrame();
+}

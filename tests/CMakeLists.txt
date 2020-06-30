@@ -4,9 +4,11 @@
 
 find_package(Catch2 CONFIG REQUIRED)
 
-add_executable(mata_test test.cpp)
-target_compile_features(mata_test PRIVATE cxx_std_17)
+add_executable(smoke_test smoke.cpp)
+target_compile_features(smoke_test PRIVATE cxx_std_17)
 
-target_link_libraries(mata_test PRIVATE mata_lib Catch2::Catch2)
+target_link_libraries(smoke_test PRIVATE mata_lib Catch2::Catch2)
 
-add_test(NAME mata_test COMMAND mata_test)
+file(COPY ${CMAKE_SOURCE_DIR}/resources DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
+
+add_test(NAME smoke_test COMMAND smoke_test)

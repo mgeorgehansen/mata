@@ -19,6 +19,7 @@ public:
   App();
   ~App() noexcept;
 
+  void stepFrame() const;
   void run() const;
 };
 

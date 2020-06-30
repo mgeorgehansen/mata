@@ -57,15 +57,19 @@ public:
 
   ~Impl() { glfwTerminate(); }
 
+  void stepFrame() const {
+    this->processInput();
+
+    this->m_pRenderer->drawFrame();
+
+    this->swapBuffers();
+
+    glfwPollEvents();
+  }
+
   void run() const {
     while (!glfwWindowShouldClose(this->m_pWindow)) {
-      this->processInput();
-
-      this->m_pRenderer->drawFrame();
-
-      this->swapBuffers();
-
-      glfwPollEvents();
+      this->stepFrame();
     }
   }
 };
@@ -73,6 +77,8 @@ public:
 App::App() : m_pImpl(std::make_unique<Impl>()) {}
 
 App::~App() noexcept = default;
+
+void App::stepFrame() const { m_pImpl->stepFrame(); }
 
 void App::run() const { m_pImpl->run(); }
 
