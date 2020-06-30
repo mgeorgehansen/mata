@@ -26,6 +26,8 @@ matrix:
             - libglu1-mesa-dev
       before_script:
         - travis_wait ./scripts/install-deps.sh
+        - export DISPLAY=:99
+        - sh -e /etc/init.d/xvfb start
       script:
         - travis_wait ./scripts/build.sh
 
