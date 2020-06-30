@@ -3,7 +3,9 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 
 #include <GLFW/glfw3.h>
+#include <fmt/format.h>
 #include <glbinding/glbinding.h>
+#include <stdexcept>
 
 #include <mata/app.hpp>
 #include <mata/concepts/noncopyable.hpp>
@@ -11,6 +13,13 @@
 #include <mata/utils/filesystem.hpp>
 
 namespace mata {
+
+[[noreturn]] void handleGlfwError(int, const char *);
+
+[[noreturn]] void handleGlfwError(int errorCode, const char *message) {
+  throw std::runtime_error(
+      fmt::format("GLFW Error ({0}): {1}", errorCode, message));
+}
 
 class [[nodiscard]] App::Impl final : private noncopyable {
   GLFWwindow *m_pWindow{nullptr};
@@ -26,6 +35,7 @@ class [[nodiscard]] App::Impl final : private noncopyable {
 
 public:
   Impl() {
+    glfwSetErrorCallback(handleGlfwError);
     glfwInit();
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
@@ -34,9 +44,6 @@ public:
     glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 
     this->m_pWindow = glfwCreateWindow(800, 600, "Mata", nullptr, nullptr);
-    if (nullptr == this->m_pWindow) {
-      throw std::runtime_error("Failed to create GLFW Window");
-    }
     glfwMakeContextCurrent(this->m_pWindow);
 
     glbinding::initialize(glfwGetProcAddress);
