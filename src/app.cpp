@@ -34,7 +34,7 @@ class [[nodiscard]] App::Impl final : private noncopyable {
   void swapBuffers() const { glfwSwapBuffers(this->m_pWindow); }
 
 public:
-  Impl() {
+  Impl(const bool headless = false) {
     glfwSetErrorCallback(handleGlfwError);
     glfwInit();
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
@@ -42,6 +42,10 @@ public:
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
     // for mac.
     glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
+
+    if (headless) {
+      glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE);
+    }
 
     this->m_pWindow = glfwCreateWindow(800, 600, "Mata", nullptr, nullptr);
     glfwMakeContextCurrent(this->m_pWindow);
@@ -81,7 +85,7 @@ public:
   }
 };
 
-App::App() : m_pImpl(std::make_unique<Impl>()) {}
+App::App(const bool headless) : m_pImpl(std::make_unique<Impl>(headless)) {}
 
 App::~App() noexcept = default;
 

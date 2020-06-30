@@ -16,7 +16,7 @@ class [[nodiscard]] App final : private noncopyable {
   PROPAGATE_CONST(std::unique_ptr<Impl>) m_pImpl;
 
 public:
-  App();
+  App(const bool headless = false);
   ~App() noexcept;
 
   void stepFrame() const;

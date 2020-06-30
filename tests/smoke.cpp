@@ -7,6 +7,6 @@
 #include <mata/lib.hpp>
 
 TEST_CASE("Smoke test", "[main]") {
-  const mata::App app;
+  const auto app = mata::App{true};
   app.stepFrame();
 }
