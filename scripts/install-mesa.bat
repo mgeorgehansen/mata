@@ -2,15 +2,18 @@ REM Taken from https://github.com/pal1000/mesa-dist-win
 
 @echo off
 
+@set mesaloc="%TEMP%\mesa3d"
+@mkdir "%mesaloc%"
+
 @echo Downloading mesa windows binaries...
 @powershell -Command "Invoke-WebRequest https://github.com/pal1000/mesa-dist-win/releases/download/20.1.2/mesa3d-20.1.2-release-msvc.7z -OutFile mesa3d-20.1.2-release-msvc.7z"
-7z e mesa3d-20.1.2-release-msvc.7z -omesa3d -r -y
+7z x mesa3d-20.1.2-release-msvc.7z -o"%mesaloc%" -y
 @echo Download complete.
 
 @echo Installing Mesa binaries...
-@cd mesa3d || exit /b
+@cd /d "%mesaloc%" || exit /b
 dir
-@set mesaloc=%cd%
+
 @set mesainstalled=1
 @IF NOT EXIST "%windir%\System32\mesadrv.dll" IF NOT EXIST "%windir%\System32\graw.dll" IF NOT EXIST "%windir%\System32\osmesa.dll" set mesainstalled=0
 
