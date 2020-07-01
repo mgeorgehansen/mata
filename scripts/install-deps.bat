@@ -2,6 +2,15 @@
 
 setlocal
 
+REM Install Mesa3d
+
+powershell -Command "Invoke-WebRequest https://github.com/pal1000/mesa-dist-win/releases/download/20.1.2/mesa3d-20.1.2-release-msvc.7z -OutFile mesa3d-20.1.2-release-msvc.7z"
+7z e mesa3d-20.1.2-release-msvc.7z -omesa3d -r
+(echo 3 && echo 8) | mesa3d/systemwidedeploy.cmd
+
+
+REM Install VCPKG and 3rd party libraries
+
 if not defined VCPKG_HOME set "VCPKG_HOME=%USERPROFILE%\vcpkg"
 set VCPKG="%VCPKG_HOME%\vcpkg.exe"
 echo "using VCPKG_HOME=%VCPKG_HOME%"
