@@ -41,6 +41,7 @@ matrix:
 
     - os: windows
       before_script:
-        - ./scripts/install-deps.bat
+        - ./scripts/install-mesa.bat
+        - travis_wait ./scripts/install-deps.bat
       script:
         - travis_wait ./scripts/build.bat
