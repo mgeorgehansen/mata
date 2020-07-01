@@ -1,4 +1,4 @@
-REM Taken from https://github.com/pal1000/mesa-dist-win
+@REM Taken from https://github.com/pal1000/mesa-dist-win
 
 @echo off
 
