@@ -47,8 +47,9 @@ public:
       glfwWindowHint(GLFW_CONTEXT_CREATION_API, GLFW_OSMESA_CONTEXT_API);
     }
 #endif
-    // for mac.
+#if MATA_OS_MACOS
     glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
+#endif
 
     if (headless) {
       glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE);
