@@ -11,6 +11,7 @@
 #include <mata/concepts/noncopyable.hpp>
 #include <mata/renderer.hpp>
 #include <mata/utils/filesystem.hpp>
+#include <mata/utils/platform.hpp>
 
 namespace mata {
 
@@ -40,6 +41,12 @@ public:
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+    // Ensure that we use OSMESA on Windows in headless mode for CI tests.
+#if MATA_OS_WINDOWS
+    if (headless) {
+      glfwWindowHint(GLFW_CONTEXT_CREATION_API, GLFW_OSMESA_CONTEXT_API);
+    }
+#endif
     // for mac.
     glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 
