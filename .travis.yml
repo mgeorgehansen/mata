@@ -23,7 +23,6 @@ matrix:
             - libxinerama-dev
             - libxcursor-dev
             - xorg-dev
-            -
             - libglu1-mesa-dev
             - xvfb
       before_script:
