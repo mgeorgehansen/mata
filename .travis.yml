@@ -24,6 +24,7 @@ matrix:
             - libxcursor-dev
             - xorg-dev
             - libglu1-mesa-dev
+            - xvfb
       before_script:
         - travis_wait ./scripts/install-deps.sh
         - export DISPLAY=:99
