@@ -23,11 +23,12 @@ matrix:
             - libxinerama-dev
             - libxcursor-dev
             - xorg-dev
+            -
             - libglu1-mesa-dev
             - xvfb
       before_script:
         - travis_wait ./scripts/install-deps.sh
-        - Xvfb :99 &
+        - Xvfb :99 -screen 0 1024x768x24 -ac +render -noreset &
         - export DISPLAY=:99
       script:
         - travis_wait ./scripts/build.sh
