@@ -9,7 +9,8 @@ REM Taken from https://github.com/pal1000/mesa-dist-win
 
 @echo Installing Mesa binaries...
 @cd mesa3d || exit /b
-set mesaloc=%cd%
+dir
+@set mesaloc=%cd%
 @set mesainstalled=1
 @IF NOT EXIST "%windir%\System32\mesadrv.dll" IF NOT EXIST "%windir%\System32\graw.dll" IF NOT EXIST "%windir%\System32\osmesa.dll" set mesainstalled=0
 
