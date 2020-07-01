@@ -27,7 +27,7 @@ matrix:
             - xvfb
       before_script:
         - travis_wait ./scripts/install-deps.sh
-        - xvfb :99 &
+        - Xvfb :99 &
         - export DISPLAY=:99
       script:
         - travis_wait ./scripts/build.sh
