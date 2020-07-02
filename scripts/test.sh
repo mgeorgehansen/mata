@@ -1,3 +1,4 @@
 #!/bin/bash
 
-ctest --output-on-failure --headless
+cd build/ || exit 1
+ctest --output-on-failure --headless || exit 1
