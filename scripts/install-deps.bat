@@ -17,7 +17,7 @@ if errorlevel 1 (
 
 if not exist %VCPKG% (
   echo "vcpkg binary not found at %VCPKG%, building vcpkg..."
-  bootstrap-vcpkg.bat || exit /b 1
+  bootstrap-vcpkg.bat
 )
 
 cd "%cwd%"
