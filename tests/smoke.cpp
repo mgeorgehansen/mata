@@ -2,11 +2,41 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 
-#define CATCH_CONFIG_MAIN
+#define CATCH_CONFIG_RUNNER
 #include <catch2/catch.hpp>
+#include <cstdlib>
+#include <iostream>
 #include <mata/lib.hpp>
 
+static auto resourcesPath = std::string{};
+
+int main(int argc, char *argv[]) {
+  auto session = Catch::Session{};
+
+  using namespace Catch::clara;
+  auto cli =
+      session.cli() | Opt(resourcesPath, "resourcesPath")["--resourcesPath"](
+                          "path to the resources folder");
+  session.cli(cli);
+
+  // Parse command line args.
+  const auto returnCode = session.applyCommandLine(argc, argv);
+  if (0 != returnCode) {
+
+    return returnCode;
+  }
+  if (resourcesPath.compare("") == 0) {
+    std::cerr << "must specify --resourecesPath param";
+    return EXIT_FAILURE;
+  }
+
+  return session.run();
+}
+
 TEST_CASE("Smoke test", "[main]") {
-  const auto app = mata::App{true};
+  auto params = mata::AppParams{};
+  params.headless = true;
+  params.resourcesPath = resourcesPath;
+  const auto app = mata::App(params);
   app.stepFrame();
 }

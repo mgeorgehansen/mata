@@ -9,6 +9,5 @@ target_compile_features(smoke_test PRIVATE cxx_std_17)
 
 target_link_libraries(smoke_test PRIVATE mata_lib Catch2::Catch2)
 
-file(COPY ${CMAKE_SOURCE_DIR}/resources DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
-
-add_test(NAME smoke_test COMMAND smoke_test)
+add_test(NAME smoke_test COMMAND smoke_test
+                                 --resourcesPath=${CMAKE_SOURCE_DIR}/resources)

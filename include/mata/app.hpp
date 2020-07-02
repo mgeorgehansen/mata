@@ -4,19 +4,26 @@
 
 #pragma once
 
+#include <filesystem>
 #include <memory>
+#include <optional>
 
 #include "concepts/noncopyable.hpp"
 #include "utils/propagate_const.hpp"
 
 namespace mata {
 
+struct AppParams {
+  bool headless = false;
+  std::optional<std::filesystem::path> resourcesPath = {};
+};
+
 class [[nodiscard]] App final : private noncopyable {
   class Impl;
   PROPAGATE_CONST(std::unique_ptr<Impl>) m_pImpl;
 
 public:
-  App(const bool headless = false);
+  App(const AppParams &params = AppParams{});
   ~App() noexcept;
 
   void stepFrame() const;

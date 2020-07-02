@@ -63,7 +63,8 @@ if(CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME)
       /w14906
       /w14928)
   elseif(CMAKE_CXX_COMPILER_ID MATCHES "Clang")
-    add_compile_options(-Werror -Weverything -Wno-c++98-compat -Wno-padded)
+    add_compile_options(-Werror -Weverything -Wno-c++98-compat -Wno-padded
+                        -Wno-exit-time-destructors -Wno-global-constructors)
   elseif(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
     add_compile_options(
       -Werror

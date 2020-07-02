@@ -35,7 +35,7 @@ class [[nodiscard]] App::Impl final : private noncopyable {
   void swapBuffers() const { glfwSwapBuffers(this->m_pWindow); }
 
 public:
-  Impl(const bool headless = false) {
+  Impl(const AppParams &params) {
     glfwSetErrorCallback(handleGlfwError);
     glfwInit();
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
@@ -43,7 +43,7 @@ public:
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
     // Ensure that we use OSMESA on Windows in headless mode for CI tests.
 #if MATA_OS_WINDOWS
-    if (headless) {
+    if (params.headless) {
       glfwWindowHint(GLFW_CONTEXT_CREATION_API, GLFW_OSMESA_CONTEXT_API);
     }
 #endif
@@ -51,7 +51,7 @@ public:
     glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 #endif
 
-    if (headless) {
+    if (params.headless) {
       glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE);
     }
 
@@ -60,8 +60,9 @@ public:
 
     glbinding::initialize(glfwGetProcAddress);
 
-    const auto vfs =
-        std::make_shared<VirtualFileSystem>(execDir() / "resources");
+    const auto resourcesPath =
+        params.resourcesPath.value_or(execDir() / "resources");
+    const auto vfs = std::make_shared<VirtualFileSystem>(resourcesPath);
     this->m_pRenderer = std::make_unique<Renderer>(vfs);
 
     glfwSetWindowUserPointer(this->m_pWindow, this->m_pRenderer.get());
@@ -93,7 +94,7 @@ public:
   }
 };
 
-App::App(const bool headless) : m_pImpl(std::make_unique<Impl>(headless)) {}
+App::App(const AppParams &params) : m_pImpl(std::make_unique<Impl>(params)) {}
 
 App::~App() noexcept = default;
 
