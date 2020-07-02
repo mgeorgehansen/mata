@@ -25,10 +25,10 @@ matrix:
             - xorg-dev
             - libglu1-mesa-dev
             - xvfb
+      services:
+        - xvfb
       before_script:
         - travis_wait ./scripts/install-deps.sh
-        - Xvfb :99 -screen 0 1024x768x24 -ac +render -noreset &
-        - export DISPLAY=:99
       script:
         - travis_wait ./scripts/build.sh
 
