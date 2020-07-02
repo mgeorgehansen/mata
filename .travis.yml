@@ -25,8 +25,8 @@ matrix:
             - libxinerama-dev
             - libxcursor-dev
             - xorg-dev
-            - meson
       install:
+        - pip3 install meson mako
         - travis_wait ./scripts/install-mesa.sh
         - travis_wait ./scripts/install-deps.sh
       before_script:
@@ -42,6 +42,7 @@ matrix:
             - meson
             - ninja
       install:
+        - pip3 install mako
         - travis_wait ./scripts/install-mesa.sh
         - travis_wait ./scripts/install-deps.sh
       before_script:
