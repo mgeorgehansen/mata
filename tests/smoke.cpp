@@ -11,14 +11,17 @@
 #include <mata/utils/exceptions.hpp>
 
 static auto resourcesPath = std::string{};
+static auto headless = false;
 
 int main(int argc, char *argv[]) {
   auto session = Catch::Session{};
 
   using namespace Catch::clara;
-  auto cli =
-      session.cli() | Opt(resourcesPath, "resourcesPath")["--resourcesPath"](
-                          "path to the resources folder");
+  auto cli = session.cli() |
+             Opt(resourcesPath, "resourcesPath")["--resourcesPath"](
+                 "path to the resources folder") |
+             Opt(headless)["--headless"](
+                 "whether to run in headless mode (e.g. in CI)");
   session.cli(cli);
 
   // Parse command line args.
@@ -37,7 +40,7 @@ int main(int argc, char *argv[]) {
 
 TEST_CASE("Smoke test", "[main]") {
   auto params = mata::AppParams{};
-  params.headless = true;
+  params.headless = headless;
   params.resourcesPath = resourcesPath;
   try {
     const auto app = mata::App(params);

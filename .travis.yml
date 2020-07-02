@@ -24,24 +24,34 @@ matrix:
             - libxcursor-dev
             - xorg-dev
             - libglu1-mesa-dev
-            - xvfb
-      services:
-        - xvfb
-      before_script:
+            - mesa
+      install:
         - travis_wait ./scripts/install-deps.sh
-      script:
+      before_script:
         - travis_wait ./scripts/build.sh
+      script:
+        - ./scripts/test.sh
 
     - os: osx
       osx_image: xcode11.4
-      before_script:
+      addons:
+        homebrew:
+          packages:
+            - meson
+            - ninja
+      install:
+        - ./scripts/install-mesa.sh
         - travis_wait ./scripts/install-deps.sh
-      script:
+      before_script:
         - travis_wait ./scripts/build.sh
+      script:
+        - ./scripts/test.sh
 
     - os: windows
-      before_script:
+      install:
         - ./scripts/install-mesa.bat
         - travis_wait ./scripts/install-deps.bat
-      script:
+      before_script:
         - travis_wait ./scripts/build.bat
+      script:
+        - ./scripts/test.bat
