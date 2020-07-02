@@ -4,10 +4,12 @@ cache:
   apt: true
   directories:
     - $VCPKG_HOME
+    - $SRC_DIR
 
 env:
   global:
     - VCPKG_HOME="$HOME/vcpkg"
+    - SRC_DIR="$HOME/src"
 
 matrix:
   include:

@@ -1,6 +1,6 @@
 #!/bin/bash
 
-SRC_DIR="$HOME/src"
+SRC_DIR="${SRC_DIR:-$HOME/src}"
 MESA_VER=20.1.2
 MESA_PKG="mesa-${MESA_VER}"
 
