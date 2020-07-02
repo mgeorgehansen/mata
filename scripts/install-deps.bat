@@ -1,5 +1,3 @@
-@echo off
-
 setlocal
 
 if not defined VCPKG_HOME set "VCPKG_HOME=%USERPROFILE%\vcpkg"
@@ -17,10 +15,10 @@ if errorlevel 1 (
 
 if not exist %VCPKG% (
   echo "vcpkg binary not found at %VCPKG%, building vcpkg..."
-  bootstrap-vcpkg.bat
+  bootstrap-vcpkg.bat || exit /b 1
 )
 
-cd "%cwd%"
+cd "%cwd%" || exit /b 1
 
 echo "installing deps..."
 %VCPKG% install fmt glfw3 glbinding catch2 || exit /b 1
