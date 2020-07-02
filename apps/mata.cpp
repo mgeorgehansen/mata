@@ -9,29 +9,15 @@
 #include <string>
 
 #include <mata/lib.hpp>
-
-inline void print_exception(const std::exception &error, size_t level = 0) {
-  if (0 == level) {
-    std::cerr << "error: " << error.what() << '\n';
-  } else {
-    std::cerr << std::string(level, ' ') << "caused by: " << error.what()
-              << '\n';
-  }
-
-  try {
-    std::rethrow_if_nested(error);
-  } catch (const std::exception &e) {
-    print_exception(e, level + 1);
-  } catch (...) {
-  }
-}
+#include <mata/utils/exceptions.hpp>
 
 int main() {
   try {
     const mata::App app;
     app.run();
   } catch (const std::exception &error) {
-    print_exception(error);
+    const auto errorMessage = mata::format_exception(error);
+    std::cerr << errorMessage << "\n";
     return 1;
   }
   return 0;
