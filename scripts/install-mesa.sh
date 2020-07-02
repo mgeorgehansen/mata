@@ -17,6 +17,7 @@ meson setup build/ \
   -Dgles2=false \
   -Dglx=disabled \
   -Degl=false \
+  -Dllvm=false \
   || exit 1
 meson compile -C build/ || exit 1
 sudo meson install -C build/ || exit 1
