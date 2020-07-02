@@ -48,6 +48,9 @@ public:
     if (params.headless) {
       glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE);
       glfwWindowHint(GLFW_CONTEXT_CREATION_API, GLFW_OSMESA_CONTEXT_API);
+      // NOTE: OSMesa does not support forward compat, so we disable it for
+      //       macOS.
+      glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_FALSE);
     }
 
     try {
