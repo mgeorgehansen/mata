@@ -25,6 +25,7 @@ matrix:
             - libxinerama-dev
             - libxcursor-dev
             - xorg-dev
+            - python3-pip
       install:
         - pip3 install meson mako
         - travis_wait ./scripts/install-mesa.sh
