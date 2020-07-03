@@ -47,7 +47,7 @@ matrix:
           packages:
             - mesa
       before_install:
-        - brew link mesa
+        - ls -la /usr/local/lib
       install:
         - travis_wait ./scripts/install-deps.sh
       before_script:
