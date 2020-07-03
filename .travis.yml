@@ -22,10 +22,12 @@ matrix:
         apt:
           packages:
             - g++-8
+            # GLFW3 dependencies on linux
             - libxinerama-dev
             - libxcursor-dev
             - xorg-dev
-            - libglapi-mesa
+            - libglu1-mesa-dev
+            # Offscreen rendering support in GLFW
             - libosmesa-dev
       install:
         - travis_wait ./scripts/install-deps.sh
