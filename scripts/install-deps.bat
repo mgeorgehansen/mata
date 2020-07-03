@@ -1,3 +1,5 @@
+@echo
+
 setlocal
 
 if not defined VCPKG_HOME set "VCPKG_HOME=%USERPROFILE%\vcpkg"
@@ -22,6 +24,7 @@ if not exist %VCPKG% (
   echo "vckpg built."
 )
 
+echo "DEBUG: exiting dir"
 popd
 
 echo "installing deps..."
