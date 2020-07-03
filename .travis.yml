@@ -44,10 +44,9 @@ matrix:
         homebrew:
           casks:
             - xquartz
-          packages:
-            - mesa
-      before_install:
-        - ls -la /usr/local/lib
+      env:
+        # Use the bundled mesa libraries in xquartz since it include osmesa
+        - LD_LIBRARY_PATH="$LD_LIBRARY_PATH:/usr/X11/lib"
       install:
         - travis_wait ./scripts/install-deps.sh
       before_script:
