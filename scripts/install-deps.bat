@@ -19,6 +19,7 @@ if not exist %VCPKG% (
   echo "vcpkg binary not found at %VCPKG%, building vcpkg..."
   bootstrap-vcpkg.bat || ^
     echo "failed to build vcpkg" && exit /b 1
+  echo "vckpg built."
 )
 
 popd
