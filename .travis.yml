@@ -42,12 +42,11 @@ matrix:
       osx_image: xcode11.4
       addons:
         homebrew:
+          casks:
+            - xquartz
           packages:
-            - meson
-            - ninja
+            - mesa
       install:
-        - pip3 install mako
-        - travis_wait ./scripts/install-mesa.sh
         - travis_wait ./scripts/install-deps.sh
       before_script:
         - travis_wait ./scripts/build.sh
