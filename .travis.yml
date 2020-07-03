@@ -29,6 +29,8 @@ matrix:
             - libglu1-mesa-dev
             # Offscreen rendering support in GLFW
             - libosmesa-dev
+      services:
+        - xvfb
       install:
         - travis_wait ./scripts/install-deps.sh
       before_script:
