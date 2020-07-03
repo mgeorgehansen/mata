@@ -26,7 +26,7 @@ matrix:
             - libxcursor-dev
             - xorg-dev
             - libglapi-mesa
-            - libosmesa
+            - libosmesa-dev
       install:
         - travis_wait ./scripts/install-deps.sh
       before_script:
