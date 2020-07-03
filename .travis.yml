@@ -46,6 +46,8 @@ matrix:
             - xquartz
           packages:
             - mesa
+      before_install:
+        - brew link mesa
       install:
         - travis_wait ./scripts/install-deps.sh
       before_script:
