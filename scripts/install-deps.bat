@@ -1,4 +1,4 @@
-@echo
+@echo off
 
 setlocal
 
@@ -19,12 +19,11 @@ if errorlevel 1 (
 
 if not exist %VCPKG% (
   echo "vcpkg binary not found at %VCPKG%, building vcpkg..."
-  bootstrap-vcpkg.bat || ^
+  call bootstrap-vcpkg.bat || ^
     echo "failed to build vcpkg" && exit /b 1
   echo "vckpg built."
 )
 
-echo "DEBUG: exiting dir"
 popd
 
 echo "installing deps..."
