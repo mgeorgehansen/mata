@@ -19,7 +19,7 @@ fi
 
 cd "${MESA_PKG}"
 if [ ! -d build/ ]; then
-  echo "building mesa..."
+  echo "configuring mesa..."
   meson setup build/ \
     -Dc_std=c11 \
     -Dcpp_std=c++11 \
@@ -30,8 +30,9 @@ if [ ! -d build/ ]; then
     -Dglx=disabled \
     -Degl=false \
     || exit 1
-  meson compile -C build/ || exit 1
-  echo "mesa built."
+  echo "mesa configured."
 fi
+
+meson compile -C build/ || exit 1
 
 sudo meson install -C build/ || exit 1
