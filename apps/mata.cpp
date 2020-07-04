@@ -12,8 +12,14 @@
 #include <mata/utils/exceptions.hpp>
 
 int main() {
+  auto params = mata::AppParams{};
+  const auto resPath = std::getenv("RESOURECES_PATH");
+  if (nullptr != resPath) {
+    params.resourcesPath = std::string(resPath);
+  }
+
   try {
-    const mata::App app;
+    const auto app = mata::App(params);
     app.run();
   } catch (const std::exception &error) {
     const auto errorMessage = mata::format_exception(error);
