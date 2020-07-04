@@ -42,15 +42,16 @@ matrix:
       osx_image: xcode11.4
       addons:
         homebrew:
-          casks:
-            - xquartz
+          packages:
+            - meson
+            - ninja
       install:
+        - pip3 install mako
+        - travis_wait ./scripts/install-mesa.sh
         - travis_wait ./scripts/install-deps.sh
       before_script:
         - travis_wait ./scripts/build.sh
       script:
-        # Use the bundled osmesa library in xquartz
-        - for f in /usr/X11/lib/*; do ln -s "$f" /usr/local/lib/; done
         - ./scripts/test.sh
 
     - os: windows
