@@ -50,7 +50,7 @@ matrix:
         - travis_wait ./scripts/build.sh
       script:
         # Use the bundled osmesa library in xquartz
-        - ln -s /usr/X11/lib/libOSMesa.8.dylib /usr/lib/libOSMesa.8.dylib
+        - sudo ln -s /usr/X11/lib/libOSMesa.8.dylib /usr/lib/libOSMesa.8.dylib
         - ./scripts/test.sh
 
     - os: windows
