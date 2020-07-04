@@ -49,9 +49,8 @@ matrix:
       before_script:
         - travis_wait ./scripts/build.sh
       script:
-        # Use the bundled mesa libraries in xquartz since it includes osmesa
-        - export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:/usr/X11/lib"
-        - ls -la /usr/X11/lib/libOSMesa.8.dylib
+        # Use the bundled osmesa library in xquartz
+        - ln -s /usr/X11/lib/libOSMesa.8.dylib /usr/lib/libOSMesa.8.dylib
         - ./scripts/test.sh
 
     - os: windows
