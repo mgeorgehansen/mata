@@ -99,9 +99,18 @@ public:
     glBindBuffer(GL_ARRAY_BUFFER, vbo);
     glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(float), &vertices[0],
                  GL_STATIC_DRAW);
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float),
-                          static_cast<void *>(nullptr));
-    glEnableVertexAttribArray(0);
+    // Vertex pos attrib.
+    constexpr auto vertexPosAttrib = 0;
+    glVertexAttribPointer(vertexPosAttrib, 3, GL_FLOAT, GL_FALSE,
+                          6 * sizeof(float), nullptr);
+    glEnableVertexAttribArray(vertexPosAttrib);
+    // Vertex color attrib.
+    constexpr auto vertexColorAttrib = 1;
+    constexpr auto vertexColorOffset = 3 * sizeof(float);
+    glVertexAttribPointer(vertexColorAttrib, 3, GL_FLOAT, GL_FALSE,
+                          6 * sizeof(float),
+                          reinterpret_cast<void *>(vertexColorOffset));
+    glEnableVertexAttribArray(vertexColorAttrib);
 
     unsigned int ebo;
     glGenBuffers(1, &ebo);
