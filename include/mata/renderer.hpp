@@ -5,6 +5,7 @@
 #pragma once
 
 #include <memory>
+#include <vector>
 
 #include "concepts/noncopyable.hpp"
 #include "utils/propagate_const.hpp"
@@ -20,7 +21,10 @@ public:
   explicit Renderer(const std::shared_ptr<VirtualFileSystem>);
   ~Renderer() noexcept;
 
-  void drawFrame() const;
+  void startFrame() const;
+  void pushGeometry(const std::vector<float> &vertices,
+                    const std::vector<unsigned int> &indices) const;
+  void endFrame() const;
   void resize(const int width, const int height) const;
 };
 

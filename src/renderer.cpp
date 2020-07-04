@@ -13,6 +13,7 @@
 #include <sstream>
 #include <stdio.h>
 #include <string>
+#include <vector>
 
 #include <mata/concepts/noncopyable.hpp>
 #include <mata/renderer.hpp>
@@ -80,11 +81,15 @@ class [[nodiscard]] Renderer::Impl final : private noncopyable {
     return hShader;
   }
 
-  void drawTriangle() const {
-    float vertices[] = {
-        -0.5f, -0.5f, 0.0f, 0.5f, -0.5f, 0.0f, 0.0f, 0.5f, 0.0f,
-    };
+public:
+  Impl(const std::shared_ptr<VirtualFileSystem> _pVfs) : m_pVfs(_pVfs) {
+    this->m_hShaderProgram = this->initShaderProgram();
+  }
 
+  void startFrame() const { this->clearScreen(); }
+
+  void pushGeometry(const std::vector<float> &vertices,
+                    const std::vector<unsigned int> &indices) const {
     unsigned int vao;
     glGenVertexArrays(1, &vao);
     glBindVertexArray(vao);
@@ -92,27 +97,26 @@ class [[nodiscard]] Renderer::Impl final : private noncopyable {
     unsigned int vbo;
     glGenBuffers(1, &vbo);
     glBindBuffer(GL_ARRAY_BUFFER, vbo);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
-
+    glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(float), &vertices[0],
+                 GL_STATIC_DRAW);
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float),
                           static_cast<void *>(nullptr));
     glEnableVertexAttribArray(0);
 
+    unsigned int ebo;
+    glGenBuffers(1, &ebo);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(unsigned int),
+                 &indices[0], GL_STATIC_DRAW);
+
     glUseProgram(this->m_hShaderProgram);
     glBindVertexArray(vao);
-    glDrawArrays(GL_TRIANGLES, 0, 3);
+    glDrawElements(GL_TRIANGLES, static_cast<int>(indices.size()),
+                   GL_UNSIGNED_INT, nullptr);
+    glBindVertexArray(0);
   }
 
-public:
-  Impl(const std::shared_ptr<VirtualFileSystem> _pVfs) : m_pVfs(_pVfs) {
-    this->m_hShaderProgram = this->initShaderProgram();
-  }
-
-  void drawFrame() const {
-    this->clearScreen();
-
-    this->drawTriangle();
-  }
+  void endFrame() const {}
 
   void resize(const int width, const int height) const {
     glViewport(0, 0, width, height);
@@ -124,7 +128,14 @@ Renderer::Renderer(const std::shared_ptr<VirtualFileSystem> _pVfs)
 
 Renderer::~Renderer() noexcept = default;
 
-void Renderer::drawFrame() const { m_pImpl->drawFrame(); }
+void Renderer::startFrame() const { m_pImpl->startFrame(); }
+
+void Renderer::pushGeometry(const std::vector<float> &vertices,
+                            const std::vector<unsigned int> &indices) const {
+  m_pImpl->pushGeometry(vertices, indices);
+}
+
+void Renderer::endFrame() const { m_pImpl->endFrame(); }
 
 void Renderer::resize(const int width, const int height) const {
   m_pImpl->resize(width, height);
