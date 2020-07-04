@@ -33,6 +33,4 @@ if [ ! -d build/ ]; then
   echo "mesa configured."
 fi
 
-meson compile -C build/ || exit 1
-
-sudo meson install -C build/ || exit 1
+sudo meson install --only-changed -C build/ || exit 1
