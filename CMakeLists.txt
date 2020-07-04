@@ -43,6 +43,7 @@ if(CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME)
       /WX
       /permissive
       /W4
+      /wd4996
       /w14640
       /w14242
       /w14254
