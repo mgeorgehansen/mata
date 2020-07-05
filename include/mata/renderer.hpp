@@ -4,6 +4,7 @@
 
 #pragma once
 
+#include <glm/mat4x4.hpp>
 #include <memory>
 #include <vector>
 
@@ -21,10 +22,13 @@ public:
   explicit Renderer(const std::shared_ptr<VirtualFileSystem>);
   ~Renderer() noexcept;
 
+  void updateViewMatrix(const glm::mat4 &transform) const;
+
   void startFrame() const;
   void pushGeometry(const std::vector<float> &vertices,
                     const std::vector<unsigned int> &indices) const;
   void endFrame() const;
+
   void resize(const int width, const int height) const;
 };
 

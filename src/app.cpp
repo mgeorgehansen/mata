@@ -5,9 +5,11 @@
 #include <GLFW/glfw3.h>
 #include <fmt/format.h>
 #include <glbinding/glbinding.h>
+#include <glm/vec2.hpp>
 #include <stdexcept>
 
 #include <mata/app.hpp>
+#include <mata/camera.hpp>
 #include <mata/concepts/noncopyable.hpp>
 #include <mata/renderer.hpp>
 #include <mata/utils/filesystem.hpp>
@@ -25,10 +27,28 @@ namespace mata {
 class [[nodiscard]] App::Impl final : private noncopyable {
   GLFWwindow *m_pWindow{nullptr};
   std::unique_ptr<Renderer> m_pRenderer{nullptr};
+  Camera m_camera{};
+  double m_lastFrameTimestamp = -1.0;
 
-  void processInput() const {
+  inline double deltaFrameTime() const {
+    return glfwGetTime() - this->m_lastFrameTimestamp;
+  }
+
+  void processInput() {
     if (glfwGetKey(this->m_pWindow, GLFW_KEY_ESCAPE) == GLFW_PRESS) {
       glfwSetWindowShouldClose(this->m_pWindow, true);
+    }
+    if (glfwGetKey(this->m_pWindow, GLFW_KEY_UP) == GLFW_PRESS) {
+      this->m_camera.translateBy({0.0f, -0.2 * this->deltaFrameTime()});
+    }
+    if (glfwGetKey(this->m_pWindow, GLFW_KEY_RIGHT) == GLFW_PRESS) {
+      this->m_camera.translateBy({-0.2 * this->deltaFrameTime(), 0.0f});
+    }
+    if (glfwGetKey(this->m_pWindow, GLFW_KEY_DOWN) == GLFW_PRESS) {
+      this->m_camera.translateBy({0.0f, 0.2 * this->deltaFrameTime()});
+    }
+    if (glfwGetKey(this->m_pWindow, GLFW_KEY_LEFT) == GLFW_PRESS) {
+      this->m_camera.translateBy({0.2 * this->deltaFrameTime(), 0.0f});
     }
   }
 
@@ -80,8 +100,10 @@ public:
 
   ~Impl() { glfwTerminate(); }
 
-  void stepFrame() const {
+  void stepFrame() {
     this->processInput();
+
+    this->m_pRenderer->updateViewMatrix(this->m_camera.viewMatrix());
 
     this->m_pRenderer->startFrame();
 
@@ -99,12 +121,14 @@ public:
 
     this->m_pRenderer->endFrame();
 
+    this->m_lastFrameTimestamp = glfwGetTime();
+
     this->swapBuffers();
 
     glfwPollEvents();
   }
 
-  void run() const {
+  void run() {
     while (!glfwWindowShouldClose(this->m_pWindow)) {
       this->stepFrame();
     }
@@ -115,8 +139,8 @@ App::App(const AppParams &params) : m_pImpl(std::make_unique<Impl>(params)) {}
 
 App::~App() noexcept = default;
 
-void App::stepFrame() const { m_pImpl->stepFrame(); }
+void App::stepFrame() { m_pImpl->stepFrame(); }
 
-void App::run() const { m_pImpl->run(); }
+void App::run() { m_pImpl->run(); }
 
 } // namespace mata

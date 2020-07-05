@@ -4,30 +4,24 @@
 
 #pragma once
 
-#include <filesystem>
+#include <glm/mat4x4.hpp>
+#include <glm/vec2.hpp>
 #include <memory>
-#include <optional>
 
-#include "concepts/noncopyable.hpp"
 #include "utils/propagate_const.hpp"
 
 namespace mata {
 
-struct AppParams {
-  bool headless = false;
-  std::optional<std::filesystem::path> resourcesPath = {};
-};
-
-class [[nodiscard]] App final : private noncopyable {
+class [[nodiscard]] Camera final {
   class Impl;
   PROPAGATE_CONST(std::unique_ptr<Impl>) m_pImpl;
 
 public:
-  App(const AppParams &params = AppParams{});
-  ~App() noexcept;
+  explicit Camera();
+  ~Camera() noexcept;
 
-  void stepFrame();
-  void run();
+  void translateBy(const glm::vec2 &translation);
+  glm::mat4 viewMatrix() const;
 };
 
 } // namespace mata

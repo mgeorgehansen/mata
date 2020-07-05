@@ -8,6 +8,8 @@
 #include <fstream>
 #include <glbinding/gl33core/gl.h>
 #include <glbinding/glbinding.h>
+#include <glm/gtc/type_ptr.hpp>
+#include <glm/mat4x4.hpp>
 #include <iostream>
 #include <memory>
 #include <sstream>
@@ -86,6 +88,12 @@ public:
     this->m_hShaderProgram = this->initShaderProgram();
   }
 
+  void updateViewMatrix(const glm::mat4 &transform) const {
+    const auto transformLoc =
+        glGetUniformLocation(this->m_hShaderProgram, "transform");
+    glUniformMatrix4fv(transformLoc, 1, GL_FALSE, glm::value_ptr(transform));
+  }
+
   void startFrame() const { this->clearScreen(); }
 
   void pushGeometry(const std::vector<float> &vertices,
@@ -136,6 +144,10 @@ Renderer::Renderer(const std::shared_ptr<VirtualFileSystem> _pVfs)
     : m_pImpl(std::make_unique<Impl>(_pVfs)) {}
 
 Renderer::~Renderer() noexcept = default;
+
+void Renderer::updateViewMatrix(const glm::mat4 &transform) const {
+  m_pImpl->updateViewMatrix(transform);
+}
 
 void Renderer::startFrame() const { m_pImpl->startFrame(); }
 

@@ -135,6 +135,7 @@ find_package(glfw3 3.3.2 CONFIG REQUIRED)
 # so we can't require a specific version. There might be a workaround.
 find_package(glbinding CONFIG REQUIRED)
 find_package(fmt 6.2.1 CONFIG REQUIRED)
+find_package(glm CONFIG REQUIRED)
 
 add_subdirectory(src)
 add_subdirectory(apps)

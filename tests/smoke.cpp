@@ -17,7 +17,7 @@ TEST_CASE("Smoke test", "[main]") {
   params.headless = true;
   params.resourcesPath = MATA_RESOURCES_PATH;
   try {
-    const auto app = mata::App(params);
+    auto app = mata::App(params);
     app.stepFrame();
   } catch (const std::exception &error) {
     const auto message = mata::format_exception(error);

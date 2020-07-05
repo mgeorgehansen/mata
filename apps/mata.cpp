@@ -19,7 +19,7 @@ int main() {
   }
 
   try {
-    const auto app = mata::App(params);
+    auto app = mata::App(params);
     app.run();
   } catch (const std::exception &error) {
     const auto errorMessage = mata::format_exception(error);
