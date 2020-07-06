@@ -34,8 +34,6 @@ if [ ! -d build/ ]; then
 fi
 
 echo 'local lib:'
-otool -l buid/src/gallium/targets/osmesa/libOSMesa.8.dylib
-echo 'system lib:'
-otool -l /usr/local/lib/libOSMesa.8.dylib
+otool -l build/src/gallium/targets/osmesa/libOSMesa.8.dylib
 echo 'installing...'
 sudo meson install -C build/ || exit 1
