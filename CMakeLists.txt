@@ -43,6 +43,11 @@ if(CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME)
       /WX
       /permissive
       /W4
+      # Ignore all warnings generated in external headers imported with angle
+      # brackets (NOTE: this silences template instantiation warnings in user
+      # code).
+      /external:anglebrackets
+      /external:W0
       /wd4996
       /w14640
       /w14242
