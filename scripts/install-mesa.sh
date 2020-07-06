@@ -18,19 +18,16 @@ if [ ! -d "${MESA_PKG}" ]; then
 fi
 
 cd "${MESA_PKG}"
-if [ ! -d build/ ]; then
-  echo "configuring mesa..."
-  meson setup build/ \
-    -Dc_std=c11 \
-    -Dcpp_std=c++11 \
-    -Dosmesa=gallium \
-    -Dplatforms=surfaceless \
-    -Dgles1=false \
-    -Dgles2=false \
-    -Dglx=disabled \
-    -Degl=false \
-    || exit 1
-  echo "mesa configured."
-fi
+echo "configuring mesa..."
+meson setup build/ \
+  -Dc_std=c11 \
+  -Dcpp_std=c++11 \
+  -Dosmesa=gallium \
+  -Dplatforms=surfaceless \
+  -Dgles1=false \
+  -Dgles2=false \
+  -Dglx=disabled \
+  -Degl=false
+echo "mesa configured."
 
-sudo meson install --only-changed -C build/ || exit 1
+sudo meson install -C build/ || exit 1
