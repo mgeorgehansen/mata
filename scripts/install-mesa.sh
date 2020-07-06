@@ -17,10 +17,12 @@ if [ ! -d "${MESA_PKG}" ]; then
   echo "mesa sources unpacked."
 fi
 
+BUILD_DIR="build"
+
 cd "${MESA_PKG}" || exit 1
 if [ ! -d build/ ]; then
   echo "configuring mesa..."
-  meson setup build/ \
+  meson setup "${BUILD_DIR}/" \
     -Dc_std=c11 \
     -Dcpp_std=c++11 \
     -Dosmesa=gallium \
@@ -30,6 +32,7 @@ if [ ! -d build/ ]; then
     -Dglx=disabled \
     -Degl=false \
     || exit 1
+  ninja build -C "${BUILD_DIR}/"
   echo "mesa configured."
 fi
 
@@ -40,10 +43,11 @@ echo 'installing...'
 # works around the issue by backing up the build dir before install, ensuring
 # that the backup is restored after install succeeds to preserve the original
 # built files.
-cp -r build build-bck || exit 1
-sudo meson install -C build/
+BACKUP_BUILD_DIR="${BUILD_DIR}-bck"
+cp -r "${BUILD_DIR}" "${BACKUP_BUILD_DIR}" || exit 1
+sudo meson install -C "${BUILD_DIR}/"
 exit_code=$?
-rm -rf build/ && mv build-bck build || exit 1
+rm -rf "${BUILD_DIR:?}/" && mv "${BACKUP_BUILD_DIR}" "${BUILD_DIR}" || exit 1
 if [ 0 -ne ${exit_code} ]; then
   echo 'installation failed.'
   exit 1
