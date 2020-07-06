@@ -7,7 +7,7 @@ MESA_PKG="mesa-${MESA_VER}"
 if [ ! -d "$SRC_DIR" ]; then
   mkdir -p "$SRC_DIR"
 fi
-cd "$SRC_DIR"
+cd "$SRC_DIR" || exit 1
 
 if [ ! -d "${MESA_PKG}" ]; then
   echo "downloading mesa sources..."
@@ -17,23 +17,19 @@ if [ ! -d "${MESA_PKG}" ]; then
   echo "mesa sources unpacked."
 fi
 
-cd "${MESA_PKG}"
-if [ ! -d build/ ]; then
-  echo "configuring mesa..."
-  meson setup build/ \
-    -Dc_std=c11 \
-    -Dcpp_std=c++11 \
-    -Dosmesa=gallium \
-    -Dplatforms=surfaceless \
-    -Dgles1=false \
-    -Dgles2=false \
-    -Dglx=disabled \
-    -Degl=false \
-    || exit 1
-  echo "mesa configured."
-fi
+cd "${MESA_PKG}" || exit 1
+echo "configuring mesa..."
+meson setup --wipe build/ \
+  -Dc_std=c11 \
+  -Dcpp_std=c++11 \
+  -Dosmesa=gallium \
+  -Dplatforms=surfaceless \
+  -Dgles1=false \
+  -Dgles2=false \
+  -Dglx=disabled \
+  -Degl=false \
+  || exit 1
+echo "mesa configured."
 
-echo 'local lib:'
-otool -l build/src/gallium/targets/osmesa/libOSMesa.8.dylib
 echo 'installing...'
 sudo meson install -C build/ || exit 1
