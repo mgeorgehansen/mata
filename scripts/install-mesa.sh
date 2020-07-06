@@ -18,18 +18,34 @@ if [ ! -d "${MESA_PKG}" ]; then
 fi
 
 cd "${MESA_PKG}" || exit 1
-echo "configuring mesa..."
-meson setup --wipe build/ \
-  -Dc_std=c11 \
-  -Dcpp_std=c++11 \
-  -Dosmesa=gallium \
-  -Dplatforms=surfaceless \
-  -Dgles1=false \
-  -Dgles2=false \
-  -Dglx=disabled \
-  -Degl=false \
-  || exit 1
-echo "mesa configured."
+if [ ! -d build/ ]; then
+  echo "configuring mesa..."
+  meson setup build/ \
+    -Dc_std=c11 \
+    -Dcpp_std=c++11 \
+    -Dosmesa=gallium \
+    -Dplatforms=surfaceless \
+    -Dgles1=false \
+    -Dgles2=false \
+    -Dglx=disabled \
+    -Degl=false \
+    || exit 1
+  echo "mesa configured."
+fi
 
 echo 'installing...'
-sudo meson install -C build/ || exit 1
+# KLUDGE: Fix for issue related to https://github.com/mesonbuild/meson/issues/2121.
+# Installation seems to modify the original built .dylibs and rewrite the rpaths
+# in the headers, causing subsequent installation failure on cached reruns. This
+# works around the issue by backing up the build dir before install, ensuring
+# that the backup is restored after install succeeds to preserve the original
+# built files.
+cp -r build build-bck || exit 1
+sudo meson install -C build/
+exit_code=$?
+rm -rf build/ && mv build-bck build || exit 1
+if [ 0 -ne ${exit_code} ]; then
+  echo 'installation failed.'
+  exit 1
+fi
+echo 'installation succeeded.'
