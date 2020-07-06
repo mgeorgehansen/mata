@@ -18,16 +18,24 @@ if [ ! -d "${MESA_PKG}" ]; then
 fi
 
 cd "${MESA_PKG}"
-echo "configuring mesa..."
-meson setup build/ \
-  -Dc_std=c11 \
-  -Dcpp_std=c++11 \
-  -Dosmesa=gallium \
-  -Dplatforms=surfaceless \
-  -Dgles1=false \
-  -Dgles2=false \
-  -Dglx=disabled \
-  -Degl=false
-echo "mesa configured."
+if [ ! -d build/ ]; then
+  echo "configuring mesa..."
+  meson setup build/ \
+    -Dc_std=c11 \
+    -Dcpp_std=c++11 \
+    -Dosmesa=gallium \
+    -Dplatforms=surfaceless \
+    -Dgles1=false \
+    -Dgles2=false \
+    -Dglx=disabled \
+    -Degl=false \
+    || exit 1
+  echo "mesa configured."
+fi
 
+echo 'local lib:'
+otool -l buid/src/gallium/targets/osmesa/libOSMesa.8.dylib
+echo 'system lib:'
+otool -l /usr/local/lib/libOSMesa.8.dylib
+echo 'installing...'
 sudo meson install -C build/ || exit 1
