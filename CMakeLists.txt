@@ -46,6 +46,7 @@ if(CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME)
       # Ignore all warnings generated in external headers imported with angle
       # brackets (NOTE: this silences template instantiation warnings in user
       # code).
+      /experimental:external
       /external:anglebrackets
       /external:W0
       /wd4996
