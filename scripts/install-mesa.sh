@@ -32,9 +32,10 @@ if [ ! -d build/ ]; then
     -Dglx=disabled \
     -Degl=false \
     || exit 1
-  ninja build -C "${BUILD_DIR}/"
   echo "mesa configured."
 fi
+
+ninja -C "${BUILD_DIR}/"
 
 echo 'installing...'
 # KLUDGE: Fix for issue related to https://github.com/mesonbuild/meson/issues/2121.
