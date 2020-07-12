@@ -11,6 +11,7 @@
 #include <mata/app.hpp>
 #include <mata/camera.hpp>
 #include <mata/concepts/noncopyable.hpp>
+#include <mata/layer.hpp>
 #include <mata/renderer.hpp>
 #include <mata/utils/filesystem.hpp>
 #include <mata/utils/platform.hpp>
@@ -96,6 +97,9 @@ public:
               reinterpret_cast<Renderer *>(glfwGetWindowUserPointer(pWindow));
           renderer->resize(width, height);
         });
+
+    const auto layer = Layer{2, 2};
+    this->m_pRenderer->setLayer(0, layer);
   }
 
   ~Impl() { glfwTerminate(); }
@@ -105,21 +109,7 @@ public:
 
     this->m_pRenderer->updateViewMatrix(this->m_camera.viewMatrix());
 
-    this->m_pRenderer->startFrame();
-
-    this->m_pRenderer->pushGeometry(
-        {{
-            0.5f,  0.5f,  0.0f, 1.0f, 0.0f, 0.0f, // top right
-            0.5f,  -0.5f, 0.0f, 0.0f, 1.0f, 0.0f, // bottom right
-            -0.5f, -0.5f, 0.0f, 0.0f, 0.0f, 1.0f, // bottom left
-            -0.5f, 0.5f,  0.0f, 0.5f, 0.5f, 0.5f  // top left
-        }},
-        {{
-            0, 1, 3, // first triangle
-            1, 2, 3  // second triangle
-        }});
-
-    this->m_pRenderer->endFrame();
+    this->m_pRenderer->drawFrame();
 
     this->m_lastFrameTimestamp = glfwGetTime();
 

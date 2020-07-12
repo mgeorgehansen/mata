@@ -13,5 +13,12 @@ source_group(
 
 add_library(mata_lib ${SOURCE_LIST} ${HEADER_LIST})
 target_include_directories(mata_lib PUBLIC ../include)
-target_link_libraries(mata_lib PRIVATE std::filesystem glfw
-                                       glbinding::glbinding fmt::fmt glm)
+target_link_libraries(
+  mata_lib
+  PRIVATE std::filesystem
+          glfw
+          glbinding::glbinding
+          glbinding::glbinding-aux
+          fmt::fmt
+          glm
+          pprint::pprint)

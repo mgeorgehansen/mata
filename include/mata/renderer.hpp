@@ -5,31 +5,37 @@
 #pragma once
 
 #include <glm/mat4x4.hpp>
+#include <glm/vec3.hpp>
 #include <memory>
-#include <vector>
 
 #include "concepts/noncopyable.hpp"
+#include "layer.hpp"
 #include "utils/propagate_const.hpp"
 #include "virtual-file-system.hpp"
 
 namespace mata {
+
+struct Tile {
+  glm::vec3 color;
+};
 
 class [[nodiscard]] Renderer final : private noncopyable {
   class Impl;
   PROPAGATE_CONST(std::unique_ptr<Impl>) m_pImpl;
 
 public:
+  using LayerIdx = unsigned int;
+
   explicit Renderer(const std::shared_ptr<VirtualFileSystem>);
   ~Renderer() noexcept;
 
-  void updateViewMatrix(const glm::mat4 &transform) const;
+  void setLayer(const LayerIdx layerN, const Layer &layer);
 
-  void startFrame() const;
-  void pushGeometry(const std::vector<float> &vertices,
-                    const std::vector<unsigned int> &indices) const;
-  void endFrame() const;
+  void updateViewMatrix(const glm::mat4 &viewMatrix);
 
-  void resize(const int width, const int height) const;
+  void drawFrame();
+
+  void resize(const int width, const int height);
 };
 
 } // namespace mata

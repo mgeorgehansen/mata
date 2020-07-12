@@ -142,6 +142,7 @@ find_package(glfw3 3.3.2 CONFIG REQUIRED)
 find_package(glbinding CONFIG REQUIRED)
 find_package(fmt 6.2.1 CONFIG REQUIRED)
 find_package(glm CONFIG REQUIRED)
+find_package(pprint CONFIG REQUIRED)
 
 add_subdirectory(src)
 add_subdirectory(apps)
