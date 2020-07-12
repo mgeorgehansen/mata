@@ -113,7 +113,7 @@ class [[nodiscard]] Renderer::Impl final : private noncopyable {
 public:
   Impl(const std::shared_ptr<VirtualFileSystem> _pVfs) : m_pVfs(_pVfs) {
     glbinding::setAfterCallback(
-        [](const glbinding::FunctionCall &functionCall) {
+        []([[maybe_unused]] const glbinding::FunctionCall &functionCall) {
           const auto errorCode = glbinding::Binding::GetError.directCall();
 
           if (errorCode == gl::GL_NO_ERROR) {
