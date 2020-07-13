@@ -33,6 +33,8 @@ public:
 
   void updateViewMatrix(const glm::mat4 &viewMatrix);
 
+  void toggleWireframeMode();
+
   void drawFrame();
 
   void resize(const int width, const int height);

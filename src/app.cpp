@@ -55,6 +55,12 @@ class [[nodiscard]] App::Impl final : private noncopyable {
     if (glfwGetKey(this->m_pWindow, GLFW_KEY_LEFT) == GLFW_PRESS) {
       this->m_camera.translateBy({SCROLL_SPEED * this->deltaFrameTime(), 0.0f});
     }
+  }
+
+  void handleKeyEvent(const int key, [[maybe_unused]] const int scancode,
+                      const int action, [[maybe_unused]] const int mods) {
+    if (key == GLFW_KEY_X && action == GLFW_PRESS) {
+      this->m_pRenderer->toggleWireframeMode();
     }
   }
 
@@ -94,16 +100,22 @@ public:
     const auto vfs = std::make_shared<VirtualFileSystem>(resourcesPath);
     this->m_pRenderer = std::make_unique<Renderer>(vfs);
 
-    glfwSetWindowUserPointer(this->m_pWindow, this->m_pRenderer.get());
+    glfwSetWindowUserPointer(this->m_pWindow, this);
     glfwSetFramebufferSizeCallback(
         this->m_pWindow,
         [](GLFWwindow *pWindow, int width, int height) -> void {
-          const auto renderer =
-              reinterpret_cast<Renderer *>(glfwGetWindowUserPointer(pWindow));
-          renderer->resize(width, height);
+          const auto app =
+              reinterpret_cast<Impl *>(glfwGetWindowUserPointer(pWindow));
+          app->m_pRenderer->resize(width, height);
         });
+    glfwSetKeyCallback(this->m_pWindow, [](GLFWwindow *pWindow, int key,
+                                           int scancode, int action, int mods) {
+      const auto app =
+          reinterpret_cast<Impl *>(glfwGetWindowUserPointer(pWindow));
+      app->handleKeyEvent(key, scancode, action, mods);
+    });
 
-    const auto layer = Layer{2, 2};
+    const auto layer = Layer{4, 4};
     this->m_pRenderer->setLayer(0, layer);
   }
 

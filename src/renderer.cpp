@@ -57,6 +57,7 @@ struct LayerH {
 class [[nodiscard]] Renderer::Impl final : private noncopyable {
   std::shared_ptr<VirtualFileSystem> m_pVfs;
   shaderprogram_h m_hShaderProgram{0};
+  bool m_wireframeModeEnabled = false;
   std::vector<LayerH> m_layers{};
 
   void clearScreen() {
@@ -188,6 +189,15 @@ public:
     glUniformMatrix4fv(transformLoc, 1, GL_FALSE, glm::value_ptr(viewMatrix));
   }
 
+  void toggleWireframeMode() {
+    m_wireframeModeEnabled = !m_wireframeModeEnabled;
+    if (m_wireframeModeEnabled) {
+      glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+    } else {
+      glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+    }
+  }
+
   void drawFrame() {
     this->clearScreen();
 
@@ -218,6 +228,8 @@ void Renderer::updateViewMatrix(const glm::mat4 &viewMatrix) {
 void Renderer::setLayer(const LayerIdx layerN, const Layer &layer) {
   m_pImpl->setLayer(layerN, layer);
 }
+
+void Renderer::toggleWireframeMode() { m_pImpl->toggleWireframeMode(); }
 
 void Renderer::drawFrame() { m_pImpl->drawFrame(); }
 
