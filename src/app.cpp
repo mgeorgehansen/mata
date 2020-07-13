@@ -25,6 +25,8 @@ namespace mata {
       fmt::format("GLFW Error ({0}): {1}", errorCode, message));
 }
 
+static constexpr auto SCROLL_SPEED = 1.5;
+
 class [[nodiscard]] App::Impl final : private noncopyable {
   GLFWwindow *m_pWindow{nullptr};
   std::unique_ptr<Renderer> m_pRenderer{nullptr};
@@ -40,16 +42,19 @@ class [[nodiscard]] App::Impl final : private noncopyable {
       glfwSetWindowShouldClose(this->m_pWindow, true);
     }
     if (glfwGetKey(this->m_pWindow, GLFW_KEY_UP) == GLFW_PRESS) {
-      this->m_camera.translateBy({0.0f, -0.2 * this->deltaFrameTime()});
+      this->m_camera.translateBy(
+          {0.0f, -SCROLL_SPEED * this->deltaFrameTime()});
     }
     if (glfwGetKey(this->m_pWindow, GLFW_KEY_RIGHT) == GLFW_PRESS) {
-      this->m_camera.translateBy({-0.2 * this->deltaFrameTime(), 0.0f});
+      this->m_camera.translateBy(
+          {-SCROLL_SPEED * this->deltaFrameTime(), 0.0f});
     }
     if (glfwGetKey(this->m_pWindow, GLFW_KEY_DOWN) == GLFW_PRESS) {
-      this->m_camera.translateBy({0.0f, 0.2 * this->deltaFrameTime()});
+      this->m_camera.translateBy({0.0f, SCROLL_SPEED * this->deltaFrameTime()});
     }
     if (glfwGetKey(this->m_pWindow, GLFW_KEY_LEFT) == GLFW_PRESS) {
-      this->m_camera.translateBy({0.2 * this->deltaFrameTime(), 0.0f});
+      this->m_camera.translateBy({SCROLL_SPEED * this->deltaFrameTime(), 0.0f});
+    }
     }
   }
 
