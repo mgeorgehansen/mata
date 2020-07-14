@@ -33,6 +33,58 @@ class [[nodiscard]] App::Impl final : private noncopyable {
   Camera m_camera{};
   double m_lastFrameTimestamp = -1.0;
 
+  void initWindow(const AppParams &params) {
+    glfwSetErrorCallback(handleGlfwError);
+    glfwInit();
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+#if MATA_OS_MACOS
+    glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
+#endif
+
+    if (params.headless) {
+      glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE);
+      glfwWindowHint(GLFW_CONTEXT_CREATION_API, GLFW_OSMESA_CONTEXT_API);
+      // NOTE: OSMesa does not support forward compat, so we disable it for
+      //       macOS.
+      glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_FALSE);
+    }
+
+    try {
+      this->m_pWindow = glfwCreateWindow(800, 600, "Mata", nullptr, nullptr);
+    } catch (...) {
+      std::throw_with_nested(
+          std::runtime_error("Failed to create OpenGL context"));
+    }
+    glfwMakeContextCurrent(this->m_pWindow);
+
+    glbinding::initialize(glfwGetProcAddress);
+  }
+
+  auto initVirtualFilesystem(const AppParams &params) const {
+    const auto resourcesPath =
+        params.resourcesPath.value_or(execDir() / "resources");
+    return std::make_shared<VirtualFileSystem>(resourcesPath);
+  }
+
+  void registerWindowEventHandlers() {
+    glfwSetWindowUserPointer(this->m_pWindow, this);
+    glfwSetFramebufferSizeCallback(
+        this->m_pWindow,
+        [](GLFWwindow *pWindow, int width, int height) -> void {
+          const auto app =
+              reinterpret_cast<Impl *>(glfwGetWindowUserPointer(pWindow));
+          app->m_pRenderer->resize(width, height);
+        });
+    glfwSetKeyCallback(this->m_pWindow, [](GLFWwindow *pWindow, int key,
+                                           int scancode, int action, int mods) {
+      const auto app =
+          reinterpret_cast<Impl *>(glfwGetWindowUserPointer(pWindow));
+      app->handleKeyEvent(key, scancode, action, mods);
+    });
+  }
+
   inline double deltaFrameTime() const {
     return glfwGetTime() - this->m_lastFrameTimestamp;
   }
@@ -64,59 +116,20 @@ class [[nodiscard]] App::Impl final : private noncopyable {
     }
   }
 
+  void initScene() {
+    const auto layer = Layer{4, 4};
+    this->m_pRenderer->setLayer(0, layer);
+  }
+
   void swapBuffers() const { glfwSwapBuffers(this->m_pWindow); }
 
 public:
   Impl(const AppParams &params) {
-    glfwSetErrorCallback(handleGlfwError);
-    glfwInit();
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
-    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-#if MATA_OS_MACOS
-    glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
-#endif
-
-    if (params.headless) {
-      glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE);
-      glfwWindowHint(GLFW_CONTEXT_CREATION_API, GLFW_OSMESA_CONTEXT_API);
-      // NOTE: OSMesa does not support forward compat, so we disable it for
-      //       macOS.
-      glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_FALSE);
-    }
-
-    try {
-      this->m_pWindow = glfwCreateWindow(800, 600, "Mata", nullptr, nullptr);
-    } catch (...) {
-      std::throw_with_nested(
-          std::runtime_error("Failed to create OpenGL context"));
-    }
-    glfwMakeContextCurrent(this->m_pWindow);
-
-    glbinding::initialize(glfwGetProcAddress);
-
-    const auto resourcesPath =
-        params.resourcesPath.value_or(execDir() / "resources");
-    const auto vfs = std::make_shared<VirtualFileSystem>(resourcesPath);
+    this->initWindow(params);
+    const auto vfs = this->initVirtualFilesystem(params);
     this->m_pRenderer = std::make_unique<Renderer>(vfs);
-
-    glfwSetWindowUserPointer(this->m_pWindow, this);
-    glfwSetFramebufferSizeCallback(
-        this->m_pWindow,
-        [](GLFWwindow *pWindow, int width, int height) -> void {
-          const auto app =
-              reinterpret_cast<Impl *>(glfwGetWindowUserPointer(pWindow));
-          app->m_pRenderer->resize(width, height);
-        });
-    glfwSetKeyCallback(this->m_pWindow, [](GLFWwindow *pWindow, int key,
-                                           int scancode, int action, int mods) {
-      const auto app =
-          reinterpret_cast<Impl *>(glfwGetWindowUserPointer(pWindow));
-      app->handleKeyEvent(key, scancode, action, mods);
-    });
-
-    const auto layer = Layer{4, 4};
-    this->m_pRenderer->setLayer(0, layer);
+    this->registerWindowEventHandlers();
+    this->initScene();
   }
 
   ~Impl() { glfwTerminate(); }
