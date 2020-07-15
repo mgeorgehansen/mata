@@ -16,6 +16,7 @@
 #include <mata/renderer.hpp>
 #include <mata/utils/filesystem.hpp>
 #include <mata/utils/platform.hpp>
+#include <mata/utils/time.hpp>
 #include <mata/window.hpp>
 
 namespace mata {
@@ -27,18 +28,18 @@ initVirtualFilesystem(const AppParams &params) {
   return std::make_shared<VirtualFileSystem>(resourcesPath);
 }
 
-static constexpr auto SCROLL_SPEED = 40.0f;
+static constexpr auto SCROLL_SPEED = 2.0f;
 
 class [[nodiscard]] App::Impl final : private noncopyable {
 private:
+  static constexpr auto SIMULATION_UPDATE_FREQ = 10_fms;
+
   std::shared_ptr<VirtualFileSystem> m_pVfs;
   Window m_window;
   Renderer m_renderer;
 
   Camera m_camera{};
   bool m_closeRequested = false;
-  std::chrono::high_resolution_clock::time_point m_lastFrameTime =
-      std::chrono::high_resolution_clock::now();
   float m_cameraHorizontalAxis = 0.0f;
   float m_cameraVerticalAxis = 0.0f;
 
@@ -47,9 +48,10 @@ private:
     m_renderer.setLayer(0, layer);
   }
 
-  void updateCamera(const std::chrono::duration<float, std::milli> dt) {
-    m_camera.translateBy({dt.count() * -SCROLL_SPEED * m_cameraHorizontalAxis,
-                          dt.count() * -SCROLL_SPEED * m_cameraVerticalAxis});
+  void updateCamera(const fmilliseconds dt) {
+    const auto secs = dt.count() / 1000.0f;
+    m_camera.translateBy({secs * -SCROLL_SPEED * m_cameraHorizontalAxis,
+                          secs * -SCROLL_SPEED * m_cameraVerticalAxis});
   }
 
 public:
@@ -89,18 +91,37 @@ public:
     initScene();
   }
 
-  void stepFrame() {
-    const auto dt = std::chrono::high_resolution_clock::now() - m_lastFrameTime;
-    updateCamera(dt);
+  void stepSimulation(const fmilliseconds dt) { updateCamera(dt); }
+
+  void render() {
     m_renderer.updateViewMatrix(m_camera.viewMatrix());
     m_renderer.drawFrame();
     m_window.update();
-    m_lastFrameTime = std::chrono::high_resolution_clock::now();
+  }
+
+  void stepFrame() {
+    this->stepSimulation(SIMULATION_UPDATE_FREQ);
+    this->render();
   }
 
   void run() {
+    // Based on https://gafferongames.com/post/fix_your_timestep/.
+    auto lastFrameEndedAt = std::chrono::high_resolution_clock::now();
+    auto simulationTimeLeft = 0_fms;
     while (!m_closeRequested) {
-      this->stepFrame();
+      const auto currentFrameStartedAt =
+          std::chrono::high_resolution_clock::now();
+      const auto lastFrameDuration = currentFrameStartedAt - lastFrameEndedAt;
+
+      simulationTimeLeft += lastFrameDuration;
+      while (simulationTimeLeft >= SIMULATION_UPDATE_FREQ) {
+        simulationTimeLeft -= SIMULATION_UPDATE_FREQ;
+        this->stepSimulation(SIMULATION_UPDATE_FREQ);
+      }
+
+      this->render();
+
+      lastFrameEndedAt = currentFrameStartedAt;
     }
   }
 };
