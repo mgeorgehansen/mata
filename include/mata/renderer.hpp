@@ -12,6 +12,7 @@
 #include "layer.hpp"
 #include "utils/propagate_const.hpp"
 #include "virtual-file-system.hpp"
+#include "window.hpp"
 
 namespace mata {
 
@@ -26,7 +27,7 @@ class [[nodiscard]] Renderer final : private noncopyable {
 public:
   using LayerIdx = unsigned int;
 
-  explicit Renderer(const std::shared_ptr<VirtualFileSystem>);
+  Renderer(const Window &window, const std::shared_ptr<VirtualFileSystem>);
   ~Renderer() noexcept;
 
   void setLayer(const LayerIdx layerN, const Layer &layer);

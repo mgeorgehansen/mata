@@ -3,6 +3,7 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 
 #include <GLFW/glfw3.h>
+#include <chrono>
 #include <fmt/format.h>
 #include <glbinding/glbinding.h>
 #include <glm/vec2.hpp>
@@ -15,141 +16,90 @@
 #include <mata/renderer.hpp>
 #include <mata/utils/filesystem.hpp>
 #include <mata/utils/platform.hpp>
+#include <mata/window.hpp>
 
 namespace mata {
 
-[[noreturn]] void handleGlfwError(int, const char *);
-
-[[noreturn]] void handleGlfwError(int errorCode, const char *message) {
-  throw std::runtime_error(
-      fmt::format("GLFW Error ({0}): {1}", errorCode, message));
+inline std::shared_ptr<VirtualFileSystem>
+initVirtualFilesystem(const AppParams &params) {
+  const auto resourcesPath =
+      params.resourcesPath.value_or(execDir() / "resources");
+  return std::make_shared<VirtualFileSystem>(resourcesPath);
 }
 
-static constexpr auto SCROLL_SPEED = 1.5;
+static constexpr auto SCROLL_SPEED = 40.0f;
 
 class [[nodiscard]] App::Impl final : private noncopyable {
-  GLFWwindow *m_pWindow{nullptr};
-  std::unique_ptr<Renderer> m_pRenderer{nullptr};
+private:
+  std::shared_ptr<VirtualFileSystem> m_pVfs;
+  Window m_window;
+  Renderer m_renderer;
+
   Camera m_camera{};
-  double m_lastFrameTimestamp = -1.0;
-
-  void initWindow(const AppParams &params) {
-    glfwSetErrorCallback(handleGlfwError);
-    glfwInit();
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
-    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-#if MATA_OS_MACOS
-    glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
-#endif
-
-    if (params.headless) {
-      glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE);
-      glfwWindowHint(GLFW_CONTEXT_CREATION_API, GLFW_OSMESA_CONTEXT_API);
-      // NOTE: OSMesa does not support forward compat, so we disable it for
-      //       macOS.
-      glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_FALSE);
-    }
-
-    try {
-      this->m_pWindow = glfwCreateWindow(800, 600, "Mata", nullptr, nullptr);
-    } catch (...) {
-      std::throw_with_nested(
-          std::runtime_error("Failed to create OpenGL context"));
-    }
-    glfwMakeContextCurrent(this->m_pWindow);
-
-    glbinding::initialize(glfwGetProcAddress);
-  }
-
-  auto initVirtualFilesystem(const AppParams &params) const {
-    const auto resourcesPath =
-        params.resourcesPath.value_or(execDir() / "resources");
-    return std::make_shared<VirtualFileSystem>(resourcesPath);
-  }
-
-  void registerWindowEventHandlers() {
-    glfwSetWindowUserPointer(this->m_pWindow, this);
-    glfwSetFramebufferSizeCallback(
-        this->m_pWindow,
-        [](GLFWwindow *pWindow, int width, int height) -> void {
-          const auto app =
-              reinterpret_cast<Impl *>(glfwGetWindowUserPointer(pWindow));
-          app->m_pRenderer->resize(width, height);
-        });
-    glfwSetKeyCallback(this->m_pWindow, [](GLFWwindow *pWindow, int key,
-                                           int scancode, int action, int mods) {
-      const auto app =
-          reinterpret_cast<Impl *>(glfwGetWindowUserPointer(pWindow));
-      app->handleKeyEvent(key, scancode, action, mods);
-    });
-  }
-
-  inline double deltaFrameTime() const {
-    return glfwGetTime() - this->m_lastFrameTimestamp;
-  }
-
-  void processInput() {
-    if (glfwGetKey(this->m_pWindow, GLFW_KEY_ESCAPE) == GLFW_PRESS) {
-      glfwSetWindowShouldClose(this->m_pWindow, true);
-    }
-    if (glfwGetKey(this->m_pWindow, GLFW_KEY_UP) == GLFW_PRESS) {
-      this->m_camera.translateBy(
-          {0.0f, -SCROLL_SPEED * this->deltaFrameTime()});
-    }
-    if (glfwGetKey(this->m_pWindow, GLFW_KEY_RIGHT) == GLFW_PRESS) {
-      this->m_camera.translateBy(
-          {-SCROLL_SPEED * this->deltaFrameTime(), 0.0f});
-    }
-    if (glfwGetKey(this->m_pWindow, GLFW_KEY_DOWN) == GLFW_PRESS) {
-      this->m_camera.translateBy({0.0f, SCROLL_SPEED * this->deltaFrameTime()});
-    }
-    if (glfwGetKey(this->m_pWindow, GLFW_KEY_LEFT) == GLFW_PRESS) {
-      this->m_camera.translateBy({SCROLL_SPEED * this->deltaFrameTime(), 0.0f});
-    }
-  }
-
-  void handleKeyEvent(const int key, [[maybe_unused]] const int scancode,
-                      const int action, [[maybe_unused]] const int mods) {
-    if (key == GLFW_KEY_X && action == GLFW_PRESS) {
-      this->m_pRenderer->toggleWireframeMode();
-    }
-  }
+  bool m_closeRequested = false;
+  std::chrono::high_resolution_clock::time_point m_lastFrameTime =
+      std::chrono::high_resolution_clock::now();
+  float m_cameraHorizontalAxis = 0.0f;
+  float m_cameraVerticalAxis = 0.0f;
 
   void initScene() {
     const auto layer = Layer{4, 4};
-    this->m_pRenderer->setLayer(0, layer);
+    m_renderer.setLayer(0, layer);
   }
 
-  void swapBuffers() const { glfwSwapBuffers(this->m_pWindow); }
+  void updateCamera(const std::chrono::duration<float, std::milli> dt) {
+    m_camera.translateBy({dt.count() * -SCROLL_SPEED * m_cameraHorizontalAxis,
+                          dt.count() * -SCROLL_SPEED * m_cameraVerticalAxis});
+  }
 
 public:
-  Impl(const AppParams &params) {
-    this->initWindow(params);
-    const auto vfs = this->initVirtualFilesystem(params);
-    this->m_pRenderer = std::make_unique<Renderer>(vfs);
-    this->registerWindowEventHandlers();
-    this->initScene();
+  Impl(const AppParams &params)
+      : m_pVfs(initVirtualFilesystem(params)), m_window(params.headless),
+        m_renderer(m_window, m_pVfs) {
+    m_window.onResize([this](const int width, const int height) {
+      m_renderer.resize(width, height);
+    });
+    m_window.onWindowCloseRequested(
+        [this]() { this->m_closeRequested = true; });
+    m_window.onKeyEvent([this](const int key, const int action) {
+      if (key == GLFW_KEY_X && action == GLFW_PRESS) {
+        m_renderer.toggleWireframeMode();
+      }
+
+      if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS) {
+        m_closeRequested = true;
+      }
+      if ((key == GLFW_KEY_UP && action == GLFW_PRESS) ||
+          (key == GLFW_KEY_DOWN && action == GLFW_RELEASE)) {
+        m_cameraVerticalAxis += 1.0f;
+      }
+      if ((key == GLFW_KEY_RIGHT && action == GLFW_PRESS) ||
+          (key == GLFW_KEY_LEFT && action == GLFW_RELEASE)) {
+        m_cameraHorizontalAxis += 1.0f;
+      }
+      if ((key == GLFW_KEY_DOWN && action == GLFW_PRESS) ||
+          (key == GLFW_KEY_UP && action == GLFW_RELEASE)) {
+        m_cameraVerticalAxis -= 1.0f;
+      }
+      if ((key == GLFW_KEY_LEFT && action == GLFW_PRESS) ||
+          (key == GLFW_KEY_RIGHT && action == GLFW_RELEASE)) {
+        m_cameraHorizontalAxis -= 1.0f;
+      }
+    });
+    initScene();
   }
 
-  ~Impl() { glfwTerminate(); }
-
   void stepFrame() {
-    this->processInput();
-
-    this->m_pRenderer->updateViewMatrix(this->m_camera.viewMatrix());
-
-    this->m_pRenderer->drawFrame();
-
-    this->m_lastFrameTimestamp = glfwGetTime();
-
-    this->swapBuffers();
-
-    glfwPollEvents();
+    const auto dt = std::chrono::high_resolution_clock::now() - m_lastFrameTime;
+    updateCamera(dt);
+    m_renderer.updateViewMatrix(m_camera.viewMatrix());
+    m_renderer.drawFrame();
+    m_window.update();
+    m_lastFrameTime = std::chrono::high_resolution_clock::now();
   }
 
   void run() {
-    while (!glfwWindowShouldClose(this->m_pWindow)) {
+    while (!m_closeRequested) {
       this->stepFrame();
     }
   }

@@ -112,7 +112,9 @@ class [[nodiscard]] Renderer::Impl final : private noncopyable {
   }
 
 public:
-  Impl(const std::shared_ptr<VirtualFileSystem> _pVfs) : m_pVfs(_pVfs) {
+  Impl(const Window &window, const std::shared_ptr<VirtualFileSystem> _pVfs)
+      : m_pVfs(_pVfs) {
+    glbinding::initialize(window.glProcAddressFunc());
     glbinding::setAfterCallback(
         []([[maybe_unused]] const glbinding::FunctionCall &functionCall) {
           const auto errorCode = glbinding::Binding::GetError.directCall();
@@ -216,8 +218,9 @@ public:
   }
 }; // namespace mata
 
-Renderer::Renderer(const std::shared_ptr<VirtualFileSystem> _pVfs)
-    : m_pImpl(std::make_unique<Impl>(_pVfs)) {}
+Renderer::Renderer(const Window &window,
+                   const std::shared_ptr<VirtualFileSystem> _pVfs)
+    : m_pImpl(std::make_unique<Impl>(window, _pVfs)) {}
 
 Renderer::~Renderer() noexcept = default;
 
