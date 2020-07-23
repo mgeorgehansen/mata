@@ -3,11 +3,19 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 
 #version 330 core
-layout (location = 0) in vec2 aPos;
+layout (location = 0) in vec2 inPosition;
+layout (location = 1) in vec2 inTextureCoords;
+layout (location = 2) in int  inTileIndex;
 
 uniform mat4 viewMatrix;
 
-void main()
-{
-  gl_Position = viewMatrix * vec4(aPos, 1.0, 1.0);
+out VertexData {
+  vec3 tileCoords;
+} o;
+
+void main() {
+  // Flip the y-coord so that we can use the convention that UV coords are from
+  // top-to-bottom, instead of bottom-to-top which requires flipping textures.
+  o.tileCoords = vec3(inTextureCoords.x, 1.0 - inTextureCoords.y, inTileIndex);
+  gl_Position = viewMatrix * vec4(inPosition, 1.0, 1.0);
 }

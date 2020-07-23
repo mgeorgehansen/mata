@@ -70,8 +70,14 @@ if(CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME)
       /w14906
       /w14928)
   elseif(CMAKE_CXX_COMPILER_ID MATCHES "Clang")
-    add_compile_options(-Werror -Weverything -Wno-c++98-compat -Wno-padded
-                        -Wno-exit-time-destructors -Wno-global-constructors)
+    add_compile_options(
+      -Werror
+      -Weverything
+      -Wno-c++98-compat
+      -Wno-c++98-compat-pedantic
+      -Wno-padded
+      -Wno-exit-time-destructors
+      -Wno-global-constructors)
   elseif(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
     add_compile_options(
       -Werror
@@ -143,6 +149,7 @@ find_package(glbinding CONFIG REQUIRED)
 find_package(fmt 6.2.1 CONFIG REQUIRED)
 find_package(glm CONFIG REQUIRED)
 find_package(pprint CONFIG REQUIRED)
+find_package(lodepng CONFIG REQUIRED)
 
 add_subdirectory(src)
 add_subdirectory(apps)

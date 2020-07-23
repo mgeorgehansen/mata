@@ -12,8 +12,8 @@
 #include <mata/app.hpp>
 #include <mata/camera.hpp>
 #include <mata/concepts/noncopyable.hpp>
-#include <mata/layer.hpp>
 #include <mata/renderer.hpp>
+#include <mata/tile_layer.hpp>
 #include <mata/utils/filesystem.hpp>
 #include <mata/utils/platform.hpp>
 #include <mata/utils/time.hpp>
@@ -44,7 +44,29 @@ private:
   float m_cameraVerticalAxis = 0.0f;
 
   void initScene() {
-    const auto layer = Layer{4, 4};
+    const auto imageBytes = m_pVfs->readFile("tilesets/terrain.png");
+    const auto tilesetTexture = Texture::fromPng(imageBytes);
+    const auto tileset = Tileset{{32, 32}, {2, 2}, tilesetTexture};
+    const auto layer = TileLayer{{4, 4},
+                                 tileset,
+                                 {
+                                     {0, 0},
+                                     {1, 0},
+                                     {1, 2},
+                                     {1, 2},
+                                     {0, 0},
+                                     {1, 0},
+                                     {1, 2},
+                                     {1, 2},
+                                     {0, 0},
+                                     {1, 0},
+                                     {1, 2},
+                                     {1, 2},
+                                     {0, 0},
+                                     {1, 0},
+                                     {1, 2},
+                                     {1, 2},
+                                 }};
     m_renderer.setLayer(0, layer);
   }
 

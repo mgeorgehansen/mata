@@ -21,4 +21,5 @@ target_link_libraries(
           glbinding::glbinding-aux
           fmt::fmt
           glm
-          pprint::pprint)
+          pprint::pprint
+          lodepng)

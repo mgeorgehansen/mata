@@ -2,17 +2,13 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 
-#version 330 core
+#pragma once
 
-in VertexData {
-  vec3 tileCoords;
-} i;
+#include <vector>
 
-uniform sampler2DArray uTexture;
+namespace mata {
 
-out vec4 outColor;
+using byte = unsigned char;
+using bytes = std::vector<byte>;
 
-void main()
-{
-  outColor = texture(uTexture, i.tileCoords);
-}
+} // namespace mata

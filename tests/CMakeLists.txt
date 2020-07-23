@@ -12,8 +12,3 @@ add_executable(smoke_test smoke.cpp)
 target_compile_features(smoke_test PRIVATE cxx_std_17)
 target_link_libraries(smoke_test PRIVATE mata_lib Catch2::Catch2)
 add_test(NAME smoke_test COMMAND smoke_test)
-
-add_executable(unit_test unit.cpp)
-target_compile_features(unit_test PRIVATE cxx_std_17)
-target_link_libraries(unit_test PRIVATE mata_lib Catch2::Catch2)
-add_test(NAME unit_test COMMAND unit_test)

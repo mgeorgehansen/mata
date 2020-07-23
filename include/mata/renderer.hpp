@@ -9,16 +9,12 @@
 #include <memory>
 
 #include "concepts/noncopyable.hpp"
-#include "layer.hpp"
+#include "tile_layer.hpp"
 #include "utils/propagate_const.hpp"
 #include "virtual-file-system.hpp"
 #include "window.hpp"
 
 namespace mata {
-
-struct Tile {
-  glm::vec3 color;
-};
 
 class [[nodiscard]] Renderer final : private noncopyable {
   class Impl;
@@ -30,7 +26,7 @@ public:
   Renderer(const Window &window, const std::shared_ptr<VirtualFileSystem>);
   ~Renderer() noexcept;
 
-  void setLayer(const LayerIdx layerN, const Layer &layer);
+  void setLayer(const LayerIdx layerN, const TileLayer &layer);
 
   void updateViewMatrix(const glm::mat4 &viewMatrix);
 

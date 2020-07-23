@@ -9,6 +9,7 @@
 #include <string>
 
 #include "concepts/noncopyable.hpp"
+#include "types.hpp"
 #include "utils/propagate_const.hpp"
 
 namespace mata {
@@ -21,7 +22,9 @@ public:
   explicit VirtualFileSystem(const std::filesystem::path &rootPath);
   ~VirtualFileSystem() noexcept;
 
-  [[nodiscard]] std::string readFile(const std::filesystem::path &path) const;
+  [[nodiscard]] bytes readFile(const std::filesystem::path &path) const;
+  [[nodiscard]] std::string readTextFile(const std::filesystem::path &path)
+      const;
 };
 
 } // namespace mata
