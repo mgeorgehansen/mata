@@ -1,0 +1,5 @@
+add_subdirectory(mata-utils)
+add_subdirectory(mata-platform)
+add_subdirectory(mata-core)
+add_subdirectory(mata-renderer)
+add_subdirectory(mata)

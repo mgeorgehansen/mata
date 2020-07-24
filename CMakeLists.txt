@@ -151,10 +151,7 @@ find_package(glm CONFIG REQUIRED)
 find_package(pprint CONFIG REQUIRED)
 find_package(lodepng CONFIG REQUIRED)
 
-add_subdirectory(src)
-add_subdirectory(apps)
+add_subdirectory(packages)
 
-if((CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME OR MODERN_CMAKE_BUILD_TESTING)
-   AND BUILD_TESTING)
-  add_subdirectory(tests)
-endif()
+# if((CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME OR MODERN_CMAKE_BUILD_TESTING)
+# AND BUILD_TESTING) add_subdirectory(tests) endif()
