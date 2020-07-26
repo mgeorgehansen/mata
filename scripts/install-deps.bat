@@ -27,5 +27,5 @@ if not exist %VCPKG% (
 popd
 
 echo "installing deps..."
-%VCPKG% install fmt glfw3 glbinding glm catch2 pprint || ^
+%VCPKG% install fmt glfw3 glbinding glm catch2 lodepng || ^
   echo "failed to install dependencies" && exit /b 1

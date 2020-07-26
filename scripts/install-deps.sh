@@ -19,4 +19,4 @@ fi
 
 cd "$cwd"
 
-"$VCPKG" install fmt glfw3 glbinding glm catch2 pprint
+"$VCPKG" install fmt glfw3 glbinding glm catch2 lodepng
