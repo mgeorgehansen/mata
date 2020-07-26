@@ -112,6 +112,7 @@ if(CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME)
   # the main CMakeLists since it calls enable_testing, which must be in the main
   # CMakeLists.
   include(CTest)
+  enable_testing()
 endif()
 
 include(FetchContent)
@@ -152,6 +153,3 @@ find_package(pprint CONFIG REQUIRED)
 find_package(lodepng CONFIG REQUIRED)
 
 add_subdirectory(packages)
-
-# if((CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME OR MODERN_CMAKE_BUILD_TESTING)
-# AND BUILD_TESTING) add_subdirectory(tests) endif()

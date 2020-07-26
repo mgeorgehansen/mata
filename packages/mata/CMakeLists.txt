@@ -5,14 +5,18 @@
 file(GLOB_RECURSE HEADERS CONFIGURE_DEPENDS "include/*.hpp")
 file(GLOB_RECURSE SOURCES CONFIGURE_DEPENDS "src/*.cpp")
 
-add_executable(mata ${HEADERS} ${SOURCES})
-target_include_directories(mata PUBLIC "include/")
+add_library(mata-lib ${HEADERS} ${SOURCES})
+target_include_directories(mata-lib PUBLIC "include/")
 target_link_libraries(
-  mata
-  PRIVATE mata::core
-          mata::platform
-          mata::renderer
-          mata::utils
-          std::filesystem
-          glfw
+  mata-lib
+  PUBLIC mata::utils
+  PRIVATE mata::core mata::platform mata::renderer std::filesystem glfw
           fmt::fmt)
+add_library(mata::lib ALIAS mata-lib)
+
+add_executable(mata "mata.cpp")
+target_link_libraries(mata PRIVATE mata::lib mata::utils)
+
+if(BUILD_TESTING)
+  add_subdirectory(tests)
+endif()

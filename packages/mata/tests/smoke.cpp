@@ -7,8 +7,9 @@
 #include <catch2/catch.hpp>
 #include <cstdlib>
 #include <iostream>
-#include <mata/lib.hpp>
-#include <mata/utils/exceptions.hpp>
+
+#include <mata/app.hpp>
+#include <mata/exceptions.hpp>
 
 #include "config.hpp"
 

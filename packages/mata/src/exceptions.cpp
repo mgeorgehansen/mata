@@ -3,17 +3,16 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 
 #include <exception>
-#include <filesystem>
-#include <iostream>
-#include <memory>
 #include <string>
 
 #include <fmt/format.h>
 
-#include "mata/app.hpp"
+#include "mata/exceptions.hpp"
 
-inline std::string format_exception(const std::exception &error,
-                                    const size_t level = 0) {
+namespace mata {
+
+std::string format_exception(const std::exception &error,
+                             const std::size_t level) {
   auto output = std::string{};
   if (0 == level) {
     output.append(fmt::format("error: {}\n", error.what()));
@@ -33,20 +32,4 @@ inline std::string format_exception(const std::exception &error,
   return output;
 }
 
-int main() {
-  auto params = mata::AppParams{};
-  const auto resPath = std::getenv("RESOURECES_PATH");
-  if (nullptr != resPath) {
-    params.resourcesPath = std::string(resPath);
-  }
-
-  try {
-    auto app = mata::App(params);
-    app.run();
-  } catch (const std::exception &error) {
-    const auto errorMessage = format_exception(error);
-    std::cerr << errorMessage << "\n";
-    return 1;
-  }
-  return 0;
-}
+} // namespace mata
