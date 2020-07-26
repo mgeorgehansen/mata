@@ -50,6 +50,9 @@ if(CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME)
       /external:anglebrackets
       /external:W0
       /wd4996
+      # Ignore unused parameter warnings, covered by other compilers and the
+      # version of MSVC shipped with travis has bugs with [[maybe_unused]].
+      /wd4100
       /w14640
       /w14242
       /w14254
