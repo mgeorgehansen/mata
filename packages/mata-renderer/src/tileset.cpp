@@ -140,7 +140,7 @@ Tileset::Tileset(const Tileset &other) noexcept
 Tileset &Tileset::operator=(Tileset &other) noexcept {
   swap(*this, other);
   return *this;
-};
+}
 void swap(Tileset &first, Tileset &second) noexcept {
   using std::swap;
   swap(first.m_pImpl, second.m_pImpl);
