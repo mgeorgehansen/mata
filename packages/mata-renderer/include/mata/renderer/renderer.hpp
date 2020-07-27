@@ -12,6 +12,7 @@
 #include <mata/platform/virtual_file_system.hpp>
 #include <mata/utils/propagate_const.hpp>
 
+#include "camera.hpp"
 #include "tile_layer.hpp"
 #include "window.hpp"
 
@@ -31,7 +32,7 @@ public:
 
   void setLayer(const LayerIdx layerN, const TileLayer &layer);
 
-  void updateViewMatrix(const glm::mat4 &viewMatrix);
+  void updateCamera(const Camera &camera) noexcept;
 
   void toggleWireframeMode();
 

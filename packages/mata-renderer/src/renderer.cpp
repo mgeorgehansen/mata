@@ -344,7 +344,8 @@ public:
                                               });
   }
 
-  void updateViewMatrix(const glm::mat4 &viewMatrix) const {
+  void updateCamera(const Camera &camera) noexcept {
+    const auto viewMatrix = camera.viewMatrix();
     const auto transformLoc =
         glGetUniformLocation(this->m_hShaderProgram, "viewMatrix");
     glUniformMatrix4fv(transformLoc, 1, GL_FALSE, glm::value_ptr(viewMatrix));
@@ -386,8 +387,8 @@ Renderer::Renderer(
 
 Renderer::~Renderer() noexcept = default;
 
-void Renderer::updateViewMatrix(const glm::mat4 &viewMatrix) {
-  m_pImpl->updateViewMatrix(viewMatrix);
+void Renderer::updateCamera(const Camera &camera) noexcept {
+  m_pImpl->updateCamera(camera);
 }
 
 void Renderer::setLayer(const LayerIdx layerN, const TileLayer &layer) {

@@ -121,7 +121,7 @@ public:
   void stepSimulation(const fmilliseconds dt) { updateCamera(dt); }
 
   void render() {
-    m_renderer.updateViewMatrix(m_camera.viewMatrix());
+    m_renderer.updateCamera(m_camera);
     m_renderer.drawFrame();
     m_window.update();
   }
