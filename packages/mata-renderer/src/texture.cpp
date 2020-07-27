@@ -42,7 +42,8 @@ Texture Texture::fromPng(const mata::core::bytes &png) {
     throw std::runtime_error(fmt::format(
         "failed to decode PNG as RGBA texture: {}", lodepng_error_text(error)));
   }
-  return Texture({static_cast<int>(width), static_cast<int>(height)}, rgba);
+  return Texture({static_cast<int>(width), static_cast<int>(height)},
+                 std::move(rgba));
 }
 
 Texture::Texture(const mata::core::GridDimensions2d &dimensions,
